@@ -3,11 +3,11 @@ import Message from "../components/Message";
 
 export default function HomePage() {
     return (
-        <div className="flex items-center">
+        <main className="grid grid-cols-[1fr_3fr]">
             <Aside />
             <div id="message-container">
                 <Message />
             </div>
-        </div>
+        </main>
     )
 }

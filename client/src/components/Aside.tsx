@@ -1,6 +1,6 @@
 export function Aside() {
     return (
-        <aside className="pt-5">
+        <aside>
             <h1 className="pb-5 text-2xl">Conversations & Threads</h1>
             <p className="pb-5">
                 A simple but reliable way to communicate with your team workers. 
@@ -8,7 +8,7 @@ export function Aside() {
                 try now message board to engage 
                 and share insights in our structured ecosystem.
             </p>
-            <button className="p-2 w-full text-white bg-blue">Add message</button>
+            <button className="p-2 w-full rounded-md text-white bg-blue">Add message</button>
         </aside>
     )
 }

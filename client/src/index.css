@@ -1,5 +1,16 @@
 @import "tailwindcss";
 
+@theme {
+  --color-blue: #004AC6;
+  --color-light-violet: #FAF8FF;
+}
+
+@layer base {
+  #root {
+    @apply p-5 min-h-screen grid grid-rows-[1fr_8fr];
+  }
+}
+
 /* :root {
   --text: #6b6375;
   --text-h: #08060d;

@@ -2,8 +2,9 @@
 
 @theme {
   --color-blue: #004AC6;
-  --color-light-violet: #FAF8FF;
-  --color-grey: #CFD2DF;
+  --color-violet: #FAF8FF;
+  --color-grey: #575757;
+  --color-light-grey: #CFD2DF;
 }
 
 /* :root {

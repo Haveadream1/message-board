@@ -8,7 +8,7 @@ export function Aside() {
                 try now message board to engage 
                 and share insights in our structured ecosystem.
             </p>
-            <button className="p-2 w-full rounded-md text-white bg-blue">Add message</button>
+            <button type="button" className="p-2 w-full rounded-md text-white bg-blue">Add message</button>
         </aside>
     )
 }

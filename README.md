@@ -3,7 +3,6 @@
 ## Project structure
 
 ## To-dos
-* Verify grey color
 * Install backend dependencies
 * Create 2 routes: (Index and New messages)
 * Create an array at the top of our index router
@@ -18,3 +17,4 @@
 * Style header
 * Create layout for message
 * Style the message component
+* Add responsiveness

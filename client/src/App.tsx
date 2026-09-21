@@ -1,14 +1,18 @@
+/* Provider */
+import { MessageProvider} from "./context/MessageContext";
+
 import Header from "./containers/Header";
 import HomePage from "./containers/HomePage";
 
 export default function App() {
-  return (
-    <>
-      <Header />
-      <HomePage />
-    </>
-  )
-
+    return (
+        <>
+            <MessageProvider>
+                <Header />
+                <HomePage />
+            </MessageProvider>
+        </>
+    )
 }
 
 // import { useState } from 'react'

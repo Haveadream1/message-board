@@ -1,15 +1,21 @@
 import { createContext, useContext, useState } from "react";
 
-// Define shap of message state
-interface MessageState {
+// Define types of message state
+interface FormState {
     username: string;
     message: string;
 }
 
+export interface Message extends FormState {
+    id: string;
+}
+
 // Define the shape of the entire context value
 interface MessageContextType {
-    messageFormData: MessageState;
-    handleDataChange: (label: keyof MessageState, value: string) => void;
+    formData: FormState;
+    handleDataChange: (label: keyof FormState, value: string) => void;
+    messages: Message[];
+    pushMessageToArr: (message : Message) => void;
     cleanForm: () => void;
 }
 
@@ -17,29 +23,37 @@ interface MessageContextType {
 const MessageContext = createContext<MessageContextType | null>(null);
 
 export function MessageProvider({ children }: { children: React.ReactNode}) {
-    const [messageFormData, setMessageFormData] = useState<MessageState>({
+    const [messages, setMessages] = useState<Message[]>([]);
+
+    const [formData, setFormData] = useState<FormState>({
         username: "",
         message: ""
     });
 
     // "keyof" ensures we can ONLY pass "username" or "message"
-    const handleDataChange = (label: keyof MessageState, value: string) => {
-        setMessageFormData((prev) => ({
+    const handleDataChange = (label: keyof FormState, value: string) => {
+        setFormData((prev) => ({
             ...prev,
             [label]: value
         }))
     }
 
+    const pushMessageToArr = (newMessage : Message) => {
+        setMessages((prev) => [...prev, newMessage]);
+    }
+
     const cleanForm = () => {
-        setMessageFormData({
+        setFormData({
             username: "",
             message: ""
         })
     }
 
     const value: MessageContextType = {
-        messageFormData,
+        formData,
         handleDataChange,
+        messages,
+        pushMessageToArr,
         cleanForm
     };
 
@@ -52,7 +66,7 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
 
 export const useMessage = () => {
     const context = useContext(MessageContext);
-    if (!context) throw new Error("useMessage must be in a MessageProvier");
+    if (!context) throw new Error("useMessage must be in a MessageProvider");
     
     return context;
 }

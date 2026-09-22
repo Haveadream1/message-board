@@ -46,7 +46,7 @@ app.post("/api/messages", (req: Request, res: Response) => {
     const { username, message } = req.body;
 
     // Backend validation (!never trust frontend)
-    if (!username || !message) {
+    if (!username.trim() || !message.trim()) {
         return res.status(400).json({ error: "Username and message are not valid" });
     }
 

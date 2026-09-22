@@ -6,7 +6,7 @@ interface AsideProps {
 }
 
 export default function Form ({ onOpenForm }: AsideProps) {
-    const {formData, handleDataChange, messages, pushMessageToArr,  cleanForm} = useMessage();
+    const {formData, handleDataChange, messages, storeMessages,  cleanForm} = useMessage();
 
     const handleSubmit = (e: React.SubmitEvent) => {
         e.preventDefault();
@@ -17,17 +17,14 @@ export default function Form ({ onOpenForm }: AsideProps) {
             return;
         }
 
-        console.log("Success submit !");
-
-        // Create a message Object 
-        const newMessage = {
-            id: crypto.randomUUID(), // Generates a unique ID
+        storeMessages({
             username: formData.username,
             message: formData.message
-        }
-        pushMessageToArr(newMessage);
+        })
+
         onOpenForm();
         cleanForm();
+        console.log("Success submit !");
     }
 
     const onCancel = () => {

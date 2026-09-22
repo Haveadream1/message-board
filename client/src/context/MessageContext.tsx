@@ -15,7 +15,7 @@ interface MessageContextType {
     formData: FormState;
     handleDataChange: (label: keyof FormState, value: string) => void;
     messages: Message[];
-    pushMessageToArr: (message : Message) => void;
+    storeMessages: (newMessage: {username: string, message: string}) => void;
     cleanForm: () => void;
 }
 
@@ -30,6 +30,8 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
         message: ""
     });
 
+    // ? Should URL or at least PORT an env variables, or in all cases it will changes later with the DB call
+    // Run at every loads, need to export to also init it after message creation ?
     useEffect(() => {
         const fetchMessages = async () => {
             const URL = "http://localhost:3000/api/messages";
@@ -46,16 +48,35 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
         fetchMessages();
     }, []);
 
+    const pushMessageToArr = (newMessage : Message) => {
+        setMessages((prev) => [...prev, newMessage]);
+    }
+
+    const storeMessages = async (newMessage: {username: string, message: string}) => {
+        const URL = "http://localhost:3000/api/messages";
+        try {
+            const response = await fetch(URL, {
+                method: "POST",
+                headers: {"Content-type": "application/json"},
+                body: JSON.stringify(newMessage)
+            })
+
+            if (!response.ok) throw new Error("Failed to post message");
+            
+            const savedMessage = await response.json();
+            pushMessageToArr(savedMessage);
+        } catch (error) {
+            console.error("Failed to store message to the backend: ", error);
+            alert("Failed to save message. Please try again !");
+        }
+    }
+
     // "keyof" ensures we can ONLY pass "username" or "message"
     const handleDataChange = (label: keyof FormState, value: string) => {
         setFormData((prev) => ({
             ...prev,
             [label]: value
         }))
-    }
-
-    const pushMessageToArr = (newMessage : Message) => {
-        setMessages((prev) => [...prev, newMessage]);
     }
 
     const cleanForm = () => {
@@ -69,8 +90,8 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
         formData,
         handleDataChange,
         messages,
-        pushMessageToArr,
-        cleanForm
+        cleanForm,
+        storeMessages
     };
 
     return (

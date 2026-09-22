@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 // Define types of message state
 interface FormState {
@@ -29,6 +29,22 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
         username: "",
         message: ""
     });
+
+    useEffect(() => {
+        const fetchMessages = async () => {
+            const URL = "http://localhost:3000/api/messages";
+            try {
+                const response = await fetch(URL);
+                const data = await response.json();
+                setMessages(data);
+            } catch (error) {
+                console.error("Failed to fetch messages: ", error);
+            } finally {
+                // set off the loader
+            }
+        }
+        fetchMessages();
+    }, []);
 
     // "keyof" ensures we can ONLY pass "username" or "message"
     const handleDataChange = (label: keyof FormState, value: string) => {

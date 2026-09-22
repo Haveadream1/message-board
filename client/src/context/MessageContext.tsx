@@ -8,6 +8,7 @@ interface FormState {
 
 export interface Message extends FormState {
     id: string;
+    timestamp: string;
 }
 
 // Define the shape of the entire context value

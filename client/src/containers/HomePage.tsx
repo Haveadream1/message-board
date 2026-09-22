@@ -17,6 +17,7 @@ export default function HomePage() {
                         key={message.id}
                         username={message.username}
                         message={message.message}
+                        date={message.timestamp.slice(0, 16).replace("T", " ")}
                     />
                 )}
                 
@@ -27,3 +28,5 @@ export default function HomePage() {
         </main>
     )
 }
+
+// Format timestamp to show yyyy-mm-dd hh-mm, only format on frontend to be able to sort it in backend if needed

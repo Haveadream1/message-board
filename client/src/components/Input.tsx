@@ -7,18 +7,19 @@ interface InputProps {
     id: string;
     type: "text" | "textarea"; // Restrict to only those 2 values
     label: string;
+    isInputEmpty: boolean;
     errorText?: string;
     formData: FormData;
     handleInput: (label: "username" | "message", value: string) => void;
     placeholder: string;
 }
 
-export function Input({ id, type, label, errorText, formData, handleInput, placeholder }: InputProps) {
+export function Input({ id, type, label,isInputEmpty, errorText, formData, handleInput, placeholder }: InputProps) {
     return (
         <>
             <div className="flex gap-4 items-baseline">
                 <label htmlFor={id}>{label}</label>
-                { errorText && (
+                { isInputEmpty && (
                     <small className="text-red">{errorText}</small>
                 )}
             </div>

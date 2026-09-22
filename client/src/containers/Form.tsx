@@ -13,7 +13,7 @@ export default function Form ({ onOpenForm }: AsideProps) {
         e.preventDefault();
 
         // Form validation
-        if (!formData.username || !formData.message) {
+        if (!formData.username.trim() || !formData.message.trim()) {
             console.log("Alert: empty inputs");
             return;
         }
@@ -44,6 +44,7 @@ export default function Form ({ onOpenForm }: AsideProps) {
                     id= "username-input"
                     type= "text"
                     label= "Username"
+                    isInputEmpty= {!formData.username.trim()}
                     errorText= "*Username cannot be empty"
                     formData= {formData}
                     handleInput= {handleDataChange}
@@ -54,6 +55,7 @@ export default function Form ({ onOpenForm }: AsideProps) {
                     id= "message-input"
                     type= "textarea"
                     label= "Message"
+                    isInputEmpty= {!formData.message.trim()}
                     errorText= "*Message cannot be empty"
                     formData= {formData}
                     handleInput= {handleDataChange}
@@ -78,4 +80,3 @@ export default function Form ({ onOpenForm }: AsideProps) {
         </>
     )
 }
-// * need an action, if we handle with backend

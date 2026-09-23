@@ -1,33 +1,68 @@
-import { drizzle } from 'drizzle-orm/postgres-js';
-import postgres from 'postgres';
-import { messagesTable } from './db/schema.js';
-import "dotenv/config";
+import express from "express";
+import type { Request, Response } from "express";
+import cors from "cors";
+import { db } from "./db/index.js";
+import { messagesTable } from "./db/schema.js";
 
-// Create connection client
-const client = postgres(process.env.DATABASE_URL!);
+const app = express();
+const PORT = process.env.PORT || 3000;
 
-// Init drizzle
-const db = drizzle(client, { schema: { messagesTable }});
+// Middleware
+app.use(cors()); // Allows frontend to talk to backend
+app.use(express.json()); // Parse incoming JSON requests
 
-async function testDatabase() {
+// Routes
+// Health route
+app.get("/health", (req: Request, res: Response) => {
+    res.json({
+        status: "ok",
+        timestamp: new Date().toISOString()
+    })
+})
+
+// GET all messages
+app.get("/api/messages", async (req: Request, res: Response) => {
     try {
+        const allMessages = await db.select().from(messagesTable);
+        res.json(allMessages);
+
+        // TODO: remove after debugg
+        console.log("All messages: ", allMessages);
+    } catch (error) {
+        console.error("Error to fetch messages: ", error);
+        res.status(500).json({ error: "Failed to fetch messages" });
+    }
+})
+
+// POST new message
+app.post("/api/messages", async (req: Request, res: Response) => {
+    try {
+        const { username, message } = req.body;
+
+        // Backend validation (!never trust frontend)
+        if (!username.trim() || !message.trim()) {
+            return res.status(400).json({ error: "Username and message are not valid" });
+        }
+
+        // Create message object with random ID
         const newMessage = {
-            username: "Haveadream1",
-            message: "Hi, is Drizzle working ?"
-        };
+            username: username,
+            message: message,
+        }
 
         // Insert into db
         await db.insert(messagesTable).values(newMessage);
         console.log("New message was successfully inserted !");
 
-        // Fetch all messsages
-        const allMessages = await db.select().from(messagesTable);
-        console.log("All messages: ", allMessages);
-
+        // Return success status with created message
+        res.status(201).json(newMessage);
     } catch (error) {
-        console.error("Database error: ", error);
-    } finally {
-        await client.end();
+        console.error("Failed to post message: ", error);
+        res.status(500).json({ error: "Failed to post message" });
     }
-}
-testDatabase();
+})
+
+// Start server
+app.listen(PORT, () => {
+    console.log(`Server is running: http://localhost:${PORT}/health`);
+});

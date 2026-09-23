@@ -17,7 +17,8 @@ export default function HomePage() {
                         key={message.id}
                         username={message.username}
                         message={message.message}
-                        date={message.timestamp.slice(0, 16).replace("T", " ")}
+                        date={message.createdAt.slice(0, 16).replace("T", " ")}
+                        likeCount={message.likeCount}
                     />
                 )}
                 

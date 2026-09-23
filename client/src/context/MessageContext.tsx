@@ -8,7 +8,8 @@ interface FormState {
 
 export interface Message extends FormState {
     id: string;
-    timestamp: string;
+    createdAt: string;
+    likeCount: number
 }
 
 // Define the shape of the entire context value
@@ -30,6 +31,8 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
         username: "",
         message: ""
     });
+
+    // const [likeCount, setLikeCount] = useState<number>(0);
 
     // ? Should URL or at least PORT an env variables, or in all cases it will changes later with the DB call
     // Run at every loads, need to export to also init it after message creation ?

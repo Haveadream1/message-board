@@ -3,7 +3,7 @@ import { pgTable, integer, varchar, timestamp  } from "drizzle-orm/pg-core";
 
 export const messagesTable = pgTable("messages", {
     id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-    username: varchar("username", { length: 30 }).notNull().unique(),
+    username: varchar("username", { length: 30 }).notNull(),
     message: varchar("message", { length: 255 }).notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     likeCount: integer("like_count").notNull().default(0)

@@ -19,6 +19,7 @@ interface MessageContextType {
     messages: Message[];
     storeMessages: (newMessage: {username: string, message: string}) => void;
     cleanForm: () => void;
+    updateLikeCount: (id: string) => void;
 }
 
 // Tell TypeScript the context can be MessageContextType OR null initially
@@ -75,6 +76,28 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
         }
     }
 
+    // ?? good practice to make the URL a common constant ?
+    const updateLikeCount = async (id: string) => {
+        try {
+            // Backend handle the incrementation
+            const response = await fetch(`http://localhost:3000/api/messages/${id}/like`, {
+                method: "PUT",
+                headers: {"Content-type": "application/json"},
+            })
+
+            if (!response.ok) throw new Error("Failed to update like count");
+            const updatedMessage = await response.json();
+            console.log(updatedMessage);
+
+            // Update the state array
+            setMessages((prev) => 
+                prev.map((message) => message.id === id ? updatedMessage : message)
+            );
+        } catch (error) {
+            console.error("Failed to update like count: ", error);
+        }
+    }
+
     // "keyof" ensures we can ONLY pass "username" or "message"
     const handleDataChange = (label: keyof FormState, value: string) => {
         setFormData((prev) => ({
@@ -95,7 +118,8 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
         handleDataChange,
         messages,
         cleanForm,
-        storeMessages
+        storeMessages,
+        updateLikeCount
     };
 
     return (

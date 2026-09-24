@@ -6,7 +6,7 @@ import Form from "./Form";
 
 export default function HomePage() {
     const [isFormEnable, setIsFormEnable] = useState(false);
-    const { messages } = useMessage();
+    const { messages, updateLikeCount } = useMessage();
 
     return (
         <main className="pt-5 flex flex-col gap-5 sm:grid grid-cols-[1fr_3fr]">
@@ -19,6 +19,7 @@ export default function HomePage() {
                         message={message.message}
                         date={message.createdAt.slice(0, 16).replace("T", " ")}
                         likeCount={message.likeCount}
+                        onLikeClick={() => updateLikeCount(message.id)}
                     />
                 )}
                 

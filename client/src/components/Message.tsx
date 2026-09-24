@@ -2,11 +2,13 @@ interface MessageProps {
     username: string;
     message: string;
     date: string;
+    likeCount: number;
+    onLikeClick: () => void
 }
 
 // ?? Is it good practice like in html to specify w and h
 
-export default function Message({ username, message, date }: MessageProps) {
+export default function Message({ username, message, date, likeCount, onLikeClick }: MessageProps) {
     return (
         <div className="grid gap-2 p-5 bg-white border-2 rounded-md border-light-grey">
             <div className="flex justify-between">
@@ -18,17 +20,17 @@ export default function Message({ username, message, date }: MessageProps) {
 
             <div className="flex pt-2 gap-4 border-t-2 border-light-grey">
                 <div className="flex gap-2">
-                    <button type="button">
+                    <button id="like-btn" type="button" onClick={onLikeClick} aria-labelledby="likeSpan">
                         <img src="https://placehold.co/20x20" alt="Like" width={20} height={20}/>
                     </button>
-                    <span>12</span>
+                    <span id="likeSpan">{likeCount}</span>
                 </div>
 
                 <div className="flex gap-2">
-                    <button type="button">
+                    <button id="reply-btn" type="button" aria-labelledby="replySpan">
                         <img src="https://placehold.co/20x20" alt="" aria-hidden="true" width={20} height={20} />
                     </button>
-                    <span>Reply</span>
+                    <span id="replySpan">Reply</span>
                 </div>
             </div>
         </div>

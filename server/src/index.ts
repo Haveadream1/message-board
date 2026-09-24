@@ -3,6 +3,7 @@ import type { Request, Response } from "express";
 import cors from "cors";
 import { db } from "./db/index.js";
 import { messagesTable } from "./db/schema.js";
+import { asc, eq, sql } from "drizzle-orm";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -23,10 +24,11 @@ app.get("/health", (req: Request, res: Response) => {
 // GET all messages
 app.get("/api/messages", async (req: Request, res: Response) => {
     try {
-        const allMessages = await db.select().from(messagesTable);
+        // Order by the oldest to newest date
+        const allMessages = await db.select().from(messagesTable).orderBy(asc(messagesTable.createdAt));
         res.json(allMessages);
     } catch (error) {
-        console.error("Error to fetch messages: ", error);
+        console.error("Error trying to fetch messages: ", error);
         res.status(500).json({ error: "Failed to fetch messages" });
     }
 })
@@ -53,8 +55,29 @@ app.post("/api/messages", async (req: Request, res: Response) => {
         // Return success status with created message
         res.status(201).json(insertedMessage);
     } catch (error) {
-        console.error("Failed to post message: ", error);
+        console.error("Error trying to post message: ", error);
         res.status(500).json({ error: "Failed to post message" });
+    }
+})
+
+// PUT message
+app.put("/api/messages/:id/like", async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        if (!id) return res.status(400).json({ error: "ID not found" });
+
+        // Update like count value
+        const [updatedMessage] = await db.update(messagesTable)
+            .set({ likeCount: sql`${messagesTable.likeCount} + 1` }) // Increment only in backend
+            .where(eq(messagesTable.id, parseInt(id))) // eq: comparison function
+            .returning();
+
+        if(!updatedMessage) return res.status(400).json({ error: "Failed to find message with id"});
+
+        res.status(200).json(updatedMessage);
+    } catch (error) {
+        console.error("Error trying to update message: ", error);
+        res.status(500).json({ error: "Failed to put message" });
     }
 })
 

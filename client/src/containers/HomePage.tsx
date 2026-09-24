@@ -6,8 +6,8 @@ import Form from "./Form";
 
 export default function HomePage() {
     const [isFormEnable, setIsFormEnable] = useState(false);
-    const { messages, updateLikeCount, deleteMessage } = useMessage();
-
+    const { messages, updateLikeCount, deleteMessage, isLoaderEnable } = useMessage();
+    
     return (
         <main className="pt-5 flex flex-col gap-5 sm:grid grid-cols-[1fr_3fr]">
             <Aside onOpenForm={() => setIsFormEnable(true)} />
@@ -27,6 +27,12 @@ export default function HomePage() {
                             onDeleteClick={() => deleteMessage(message.id)}
                         />
                     ) 
+                )}
+                
+                {isLoaderEnable && (
+                    <div className="flex justify-center">
+                        <img src="../src/assets/loader.svg" alt="Loader" width={20} height={20} className="animate-spin"/>
+                    </div>
                 )}
                 
                 {isFormEnable && (

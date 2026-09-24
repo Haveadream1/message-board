@@ -21,12 +21,14 @@ interface MessageContextType {
     cleanForm: () => void;
     updateLikeCount: (id: string) => void;
     deleteMessage: (id: string) => void;
+    isLoaderEnable: boolean;
 }
 
 // Tell TypeScript the context can be MessageContextType OR null initially
 const MessageContext = createContext<MessageContextType | null>(null);
 
 export function MessageProvider({ children }: { children: React.ReactNode}) {
+    const [isLoaderEnable, setIsLoaderEnable] = useState(false);
     const [messages, setMessages] = useState<Message[]>([]);
 
     const [formData, setFormData] = useState<FormState>({
@@ -34,13 +36,13 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
         message: ""
     });
 
-    // const [likeCount, setLikeCount] = useState<number>(0);
 
-    // ? Should URL or at least PORT an env variables, or in all cases it will changes later with the DB call
-    // Run at every loads, need to export to also init it after message creation ?
+    // ? Should URL or at least PORT an env variables
+    // ?? good practice to make the URL a common constant ?
     useEffect(() => {
         const fetchMessages = async () => {
             const URL = "http://localhost:3000/api/messages";
+            setIsLoaderEnable(true);
             try {
                 const response = await fetch(URL);
                 const data = await response.json();
@@ -48,7 +50,7 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
             } catch (error) {
                 console.error("Failed to fetch messages: ", error);
             } finally {
-                // set off the loader
+                setIsLoaderEnable(false);
             }
         }
         fetchMessages();
@@ -60,6 +62,7 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
 
     const storeMessages = async (newMessage: { username: string, message: string }) => {
         const URL = "http://localhost:3000/api/messages";
+        setIsLoaderEnable(true);
         try {
             const response = await fetch(URL, {
                 method: "POST",
@@ -74,10 +77,11 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
         } catch (error) {
             console.error("Failed to store message to the backend: ", error);
             alert("Failed to save message. Please try again !");
+        } finally {
+            setIsLoaderEnable(false);
         }
     }
 
-    // ?? good practice to make the URL a common constant ?
     const updateLikeCount = async (id: string) => {
         try {
             // Backend handle the incrementation
@@ -100,6 +104,7 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
     }
 
     const deleteMessage = async (id: string) => {
+        setIsLoaderEnable(true);
         try {
             const response = await fetch(`http://localhost:3000/api/messages/${id}`, {
                 method: "DELETE",
@@ -115,6 +120,8 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
             )
         } catch (error) {
             console.error("Failed to delete message: ", error);
+        } finally {
+            setIsLoaderEnable(false);
         }
     }
 
@@ -140,7 +147,8 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
         cleanForm,
         storeMessages,
         updateLikeCount,
-        deleteMessage
+        deleteMessage,
+        isLoaderEnable
     };
 
     return (

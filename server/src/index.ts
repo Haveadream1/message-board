@@ -50,6 +50,8 @@ app.post("/api/messages", async (req: Request, res: Response) => {
                 message: message.trim(),
             })
             .returning(); // retrieve the full messagee to be displayed directly after submit
+
+        if (!insertedMessage) return res.status(404).json({ error: "Failed to find inserted message"});
         console.log("New message was successfully inserted !", insertedMessage);
             
         // Return success status with created message
@@ -72,12 +74,31 @@ app.put("/api/messages/:id/like", async (req: Request, res: Response) => {
             .where(eq(messagesTable.id, parseInt(id))) // eq: comparison function
             .returning();
 
-        if(!updatedMessage) return res.status(400).json({ error: "Failed to find message with id"});
+        if(!updatedMessage) return res.status(404).json({ error: "Failed to find updated message"});
 
         res.status(200).json(updatedMessage);
     } catch (error) {
         console.error("Error trying to update message: ", error);
         res.status(500).json({ error: "Failed to put message" });
+    }
+})
+
+// DELETE route
+app.delete("/api/messages/:id", async (req: Request, res: Response) => {
+    try {
+        const {id} = req.params;
+        if (!id) return res.status(400).json({ error: "ID not found"});
+
+        const [deletedMessage] = await db.delete(messagesTable)
+            .where(eq(messagesTable.id, parseInt(id)))
+            .returning();
+        
+        if (!deletedMessage) return res.status(404).json({ error: "Failed to find deleted message"});
+        
+        res.status(200).json(deletedMessage);
+    } catch (error) {
+        console.error("Error trying to delete message: ", error);
+        res.status(500).json({ error: "Failed to delete message" });
     }
 })
 

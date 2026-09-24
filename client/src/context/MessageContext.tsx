@@ -20,6 +20,7 @@ interface MessageContextType {
     storeMessages: (newMessage: {username: string, message: string}) => void;
     cleanForm: () => void;
     updateLikeCount: (id: string) => void;
+    deleteMessage: (id: string) => void;
 }
 
 // Tell TypeScript the context can be MessageContextType OR null initially
@@ -82,7 +83,7 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
             // Backend handle the incrementation
             const response = await fetch(`http://localhost:3000/api/messages/${id}/like`, {
                 method: "PUT",
-                headers: {"Content-type": "application/json"},
+                headers: {"Content-type": "application/json"}
             })
 
             if (!response.ok) throw new Error("Failed to update like count");
@@ -95,6 +96,25 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
             );
         } catch (error) {
             console.error("Failed to update like count: ", error);
+        }
+    }
+
+    const deleteMessage = async (id: string) => {
+        try {
+            const response = await fetch(`http://localhost:3000/api/messages/${id}`, {
+                method: "DELETE",
+                headers: {"Content-type": "application/json"}
+            })
+            if (!response.ok) throw new Error("Failed to delete message");
+            const deletedMessage = await response.json();
+            console.log(deletedMessage);
+
+            // Update the state array, keeping all messages besides the one we delete
+            setMessages((prev) =>
+                prev.filter((message) => message.id !== id)
+            )
+        } catch (error) {
+            console.error("Failed to delete message: ", error);
         }
     }
 
@@ -119,7 +139,8 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
         messages,
         cleanForm,
         storeMessages,
-        updateLikeCount
+        updateLikeCount,
+        deleteMessage
     };
 
     return (

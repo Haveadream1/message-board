@@ -3,12 +3,13 @@ interface MessageProps {
     message: string;
     date: string;
     likeCount: number;
-    onLikeClick: () => void
+    onLikeClick: () => void;
+    onDeleteClick: () => void;
 }
 
 // ?? Is it good practice like in html to specify w and h
 
-export default function Message({ username, message, date, likeCount, onLikeClick }: MessageProps) {
+export default function Message({ username, message, date, likeCount, onLikeClick, onDeleteClick }: MessageProps) {
     return (
         <div className="grid gap-2 p-5 bg-white border-2 rounded-md border-light-grey">
             <div className="flex justify-between">
@@ -32,7 +33,7 @@ export default function Message({ username, message, date, likeCount, onLikeClic
                 </div>
 
                 <div className="flex gap-2">
-                    <button id="reply-btn" type="button">
+                    <button id="reply-btn" type="button" onClick={onDeleteClick}>
                         <img src="https://placehold.co/20x20" alt="Delete" width={20} height={20} />
                     </button>
                 </div>

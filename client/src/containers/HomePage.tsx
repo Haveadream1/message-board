@@ -11,17 +11,22 @@ export default function HomePage() {
     return (
         <main className="pt-5 flex flex-col gap-5 sm:grid grid-cols-[1fr_3fr]">
             <Aside onOpenForm={() => setIsFormEnable(true)} />
+
             <div id="message-container" className="flex flex-col gap-5">
-                {messages.map((message) =>
-                    <Message 
-                        key={message.id}
-                        username={message.username}
-                        message={message.message}
-                        date={message.createdAt.slice(0, 16).replace("T", " ")}
-                        likeCount={message.likeCount}
-                        onLikeClick={() => updateLikeCount(message.id)}
-                        onDeleteClick={() => deleteMessage(message.id)}
-                    />
+                {!messages ? (
+                    <span className="text-center">No messages yet, be the first !</span>
+                ):(
+                    messages.map((message) =>
+                        <Message 
+                            key={message.id}
+                            username={message.username}
+                            message={message.message}
+                            date={message.createdAt.slice(0, 16).replace("T", " ")}
+                            likeCount={message.likeCount}
+                            onLikeClick={() => updateLikeCount(message.id)}
+                            onDeleteClick={() => deleteMessage(message.id)}
+                        />
+                    ) 
                 )}
                 
                 {isFormEnable && (

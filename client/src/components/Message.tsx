@@ -18,19 +18,23 @@ export default function Message({ username, message, date, likeCount, onLikeClic
 
             <p>{message}</p>
 
-            <div className="flex pt-2 gap-4 border-t-2 border-light-grey">
+            <div className="flex justify-between pt-2 gap-4 border-t-2 border-light-grey">
                 <div className="flex gap-2">
                     <button id="like-btn" type="button" onClick={onLikeClick} aria-labelledby="likeSpan">
                         <img src="https://placehold.co/20x20" alt="Like" width={20} height={20}/>
                     </button>
                     <span id="likeSpan">{likeCount}</span>
-                </div>
 
-                <div className="flex gap-2">
                     <button id="reply-btn" type="button" aria-labelledby="replySpan">
                         <img src="https://placehold.co/20x20" alt="" aria-hidden="true" width={20} height={20} />
                     </button>
                     <span id="replySpan">Reply</span>
+                </div>
+
+                <div className="flex gap-2">
+                    <button id="reply-btn" type="button">
+                        <img src="https://placehold.co/20x20" alt="Delete" width={20} height={20} />
+                    </button>
                 </div>
             </div>
         </div>

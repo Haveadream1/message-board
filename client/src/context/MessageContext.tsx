@@ -56,7 +56,7 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
         setMessages((prev) => [...prev, newMessage]);
     }
 
-    const storeMessages = async (newMessage: {username: string, message: string}) => {
+    const storeMessages = async (newMessage: { username: string, message: string }) => {
         const URL = "http://localhost:3000/api/messages";
         try {
             const response = await fetch(URL, {

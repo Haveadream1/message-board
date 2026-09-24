@@ -25,9 +25,6 @@ app.get("/api/messages", async (req: Request, res: Response) => {
     try {
         const allMessages = await db.select().from(messagesTable);
         res.json(allMessages);
-
-        // TODO: remove after debugg
-        console.log("All messages: ", allMessages);
     } catch (error) {
         console.error("Error to fetch messages: ", error);
         res.status(500).json({ error: "Failed to fetch messages" });
@@ -44,18 +41,17 @@ app.post("/api/messages", async (req: Request, res: Response) => {
             return res.status(400).json({ error: "Username and message are not valid" });
         }
 
-        // Create message object with random ID
-        const newMessage = {
-            username: username,
-            message: message,
-        }
-
-        // Insert into db
-        await db.insert(messagesTable).values(newMessage);
-        console.log("New message was successfully inserted !");
-
+        // Insert new message into database
+        const [insertedMessage] = await db.insert(messagesTable)
+            .values({
+                username: username.trim(),
+                message: message.trim(),
+            })
+            .returning(); // retrieve the full messagee to be displayed directly after submit
+        console.log("New message was successfully inserted !", insertedMessage);
+            
         // Return success status with created message
-        res.status(201).json(newMessage);
+        res.status(201).json(insertedMessage);
     } catch (error) {
         console.error("Failed to post message: ", error);
         res.status(500).json({ error: "Failed to post message" });

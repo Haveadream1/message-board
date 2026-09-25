@@ -108,6 +108,9 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
     }
 
     const deleteMessage = async (id: string) => {
+        const confirmation = window.confirm("Are you sure you want to delete this message ?");
+        if (!confirmation) return; // Stop execution if user cancel deletion
+
         const deleteOperation = async () => {
             const response = await fetch(`${API_URL}/${id}`, {
                 method: "DELETE",

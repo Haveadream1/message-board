@@ -3,11 +3,13 @@ import { MessageProvider} from "./context/MessageContext";
 
 import Header from "./containers/Header";
 import HomePage from "./containers/HomePage";
+import { Toaster } from "react-hot-toast";
 
 export default function App() {
     return (
         <>
             <MessageProvider>
+                <Toaster/>
                 <Header />
                 <HomePage />
             </MessageProvider>

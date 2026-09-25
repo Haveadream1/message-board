@@ -1,4 +1,8 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import toast from "react-hot-toast";
+
+// ? Might need to be a env variable after deploy 
+const API_URL = "http://localhost:3000/api/messages";
 
 // Define types of message state
 interface FormState {
@@ -36,15 +40,12 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
         message: ""
     });
 
-
-    // ? Should URL or at least PORT an env variables
-    // ?? good practice to make the URL a common constant ?
+    // !Note: don't toast on mount -> only user interactions
     useEffect(() => {
         const fetchMessages = async () => {
-            const URL = "http://localhost:3000/api/messages";
             setIsLoaderEnable(true);
             try {
-                const response = await fetch(URL);
+                const response = await fetch(API_URL);
                 const data = await response.json();
                 setMessages(data);
             } catch (error) {
@@ -60,69 +61,75 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
         setMessages((prev) => [...prev, newMessage]);
     }
 
+    // Toast library handle the promise rejection, we can drop try/catch
     const storeMessages = async (newMessage: { username: string, message: string }) => {
-        const URL = "http://localhost:3000/api/messages";
-        setIsLoaderEnable(true);
-        try {
-            const response = await fetch(URL, {
+        const storeOperation = async () => {
+            const response = await fetch(API_URL, {
                 method: "POST",
                 headers: {"Content-type": "application/json"},
                 body: JSON.stringify(newMessage)
             })
-
             if (!response.ok) throw new Error("Failed to post message");
-            
-            const savedMessage = await response.json();
-            pushMessageToArr(savedMessage);
-        } catch (error) {
-            console.error("Failed to store message to the backend: ", error);
-            alert("Failed to save message. Please try again !");
-        } finally {
-            setIsLoaderEnable(false);
+            return await response.json();
         }
+
+        toast.promise(storeOperation(), {
+            loading: "Storing message...",
+            success: (savedMessage) => {
+                pushMessageToArr(savedMessage);
+                return "Successfully stored message"
+            },
+            error: "Failed to save message"
+        })
     }
 
     const updateLikeCount = async (id: string) => {
-        try {
+        const updateOperation = async () => {
             // Backend handle the incrementation
-            const response = await fetch(`http://localhost:3000/api/messages/${id}/like`, {
+            const response = await fetch(`${API_URL}/${id}/like`, {
                 method: "PUT",
                 headers: {"Content-type": "application/json"}
             })
 
             if (!response.ok) throw new Error("Failed to update like count");
-            const updatedMessage = await response.json();
-            console.log(updatedMessage);
-
-            // Update the state array
-            setMessages((prev) => 
-                prev.map((message) => message.id === id ? updatedMessage : message)
-            );
-        } catch (error) {
-            console.error("Failed to update like count: ", error);
+            return await response.json();
         }
+
+        toast.promise(updateOperation(), {
+            loading: "Updating likes...",
+            success: (updatedMessage) => {
+                setMessages((prev) => 
+                    prev.map((message) => message.id === id ? updatedMessage : message)
+                );
+                return "Successfully updated likes";
+            },
+            error: "Failed to update like count"
+        })
     }
 
     const deleteMessage = async (id: string) => {
-        setIsLoaderEnable(true);
-        try {
-            const response = await fetch(`http://localhost:3000/api/messages/${id}`, {
+        const deleteOperation = async () => {
+            const response = await fetch(`${API_URL}/${id}`, {
                 method: "DELETE",
                 headers: {"Content-type": "application/json"}
             })
             if (!response.ok) throw new Error("Failed to delete message");
-            const deletedMessage = await response.json();
-            console.log(deletedMessage);
-
-            // Update the state array, keeping all messages besides the one we delete
-            setMessages((prev) =>
-                prev.filter((message) => message.id !== id)
-            )
-        } catch (error) {
-            console.error("Failed to delete message: ", error);
-        } finally {
-            setIsLoaderEnable(false);
+            return await response.json();
         }
+
+        toast.promise(deleteOperation(), {
+            loading: "Deleting message...",
+            success: (deletedMessage) => {
+                // Debugg
+                console.log(deletedMessage);
+
+                setMessages((prev) => 
+                    prev.filter((message) => message.id !== id)
+                )
+                return "Successfully deleted message";
+            }, 
+            error: "Failed to delete message"
+        })
     }
 
     // "keyof" ensures we can ONLY pass "username" or "message"

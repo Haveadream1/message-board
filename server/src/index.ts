@@ -3,7 +3,7 @@ import type { Request, Response } from "express";
 import cors from "cors";
 import { db } from "./db/index.js";
 import { messages, users, messageLikes } from "./db/schema.js";
-import { asc, eq, sql } from "drizzle-orm";
+import { and, asc, eq, sql } from "drizzle-orm";
 
 import { authenticateToken } from "./middleware/authentication.js";
 import authRouter from "./routes/authentication.js"
@@ -108,13 +108,42 @@ app.put("/api/messages/:id/like", authenticateToken, async (req: Request, res: R
         const { id } = req.params;
         if (!id) return res.status(400).json({ error: "ID not found" });
 
-        // Update like count value
+        const messageId = parseInt(id);
+        const userId = req.user?.userId;
+        if (!userId) return res.status(401).json({ error: "Unauthorized"});
+
+        // Check if message exists
+        const [targetMessage] = await db.select().from(messages)
+            .where(eq(messages.id, messageId))
+            .limit(1);
+        if(!targetMessage) return res.status(404).json({ error: "Message not found"});
+
+        // Check with junction table if instance already exits
+            // Anti-spam
+        const messageLiked = await db.select().from(messageLikes)
+            .where(
+                and(
+                    eq(messageLikes.messageId, messageId),
+                    eq(messageLikes.userId, userId)
+                )
+            ).limit(1);
+        if(messageLiked.length > 0) return res.status(409).json({ error: "Conflict: message already liked"});
+
+        // If not insert instance into table
+        await db.insert(messageLikes)
+            .values({
+                messageId: messageId,
+                userId: userId
+            });
+
+        // Increment the total like count
         const [updatedMessage] = await db.update(messages)
             .set({ likeCount: sql`${messages.likeCount} + 1` }) // Increment only in backend
-            .where(eq(messages.id, parseInt(id))) // eq: comparison function
+            .where(eq(messages.id, messageId)) // eq: comparison function
             .returning();
         if(!updatedMessage) return res.status(404).json({ error: "Failed to find updated message"});
 
+        // Fetch the full message with the usernme for the frontend
         const fullMessage = await db.query.messages.findFirst({
             where: eq(messages.id, updatedMessage.id),
             with: {
@@ -145,6 +174,7 @@ app.delete("/api/messages/:id", authenticateToken, async (req: Request, res: Res
 
         const messageId = parseInt(id);
         const userId = req.user?.userId;
+        if (!userId) return res.status(401).json({ error: "Unauthorized"})
         
         const [targetMessage] = await db.select().from(messages)
             .where(eq(messages.id, messageId))

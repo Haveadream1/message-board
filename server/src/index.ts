@@ -2,7 +2,7 @@ import express from "express";
 import type { Request, Response } from "express";
 import cors from "cors";
 import { db } from "./db/index.js";
-import { messages } from "./db/schema.js";
+import { messages, users, messageLikes } from "./db/schema.js";
 import { asc, eq, sql } from "drizzle-orm";
 
 import { authenticateToken } from "./middleware/authentication.js";
@@ -25,12 +25,28 @@ app.get("/health", (req: Request, res: Response) => {
     })
 })
 
+// TODO: clean the formatted messages
+
 // GET all messages
 app.get("/api/messages", async (req: Request, res: Response) => {
     try {
         // Order by the oldest to newest date
-        const allMessages = await db.select().from(messages).orderBy(asc(messages.createdAt));
-        res.json(allMessages);
+        const allMessages = await db.query.messages.findMany({
+            orderBy: [asc(messages.createdAt)],
+            with: {
+                owner: { columns: {username: true} } // To fetch only username not passwordHash
+            }
+        })
+
+        const formattedMessages = allMessages.map((msg) => ({
+            id: msg.id.toString(),
+            username: msg?.owner.username || "Visitor",
+            message: msg.message,
+            createdAt: msg.createdAt.toISOString(),
+            likeCount: msg.likeCount
+        }))
+
+        res.json(formattedMessages);
     } catch (error) {
         console.error("Error trying to fetch messages: ", error);
         res.status(500).json({ error: "Failed to fetch messages" });
@@ -45,6 +61,7 @@ app.post("/api/messages", authenticateToken, async (req: Request, res: Response)
 
         // With the auth, user is clearly determined
         const userId = req.user?.userId;
+        if (!userId) return res.status(401).json({ error: "Unauthorized"})
 
         // Backend validation (!never trust frontend)
         if (!message || !message.trim()) {
@@ -58,20 +75,35 @@ app.post("/api/messages", authenticateToken, async (req: Request, res: Response)
                 message: message.trim(),
             })
             .returning(); // retrieve the full messagee to be displayed directly after submit
-
         if (!insertedMessage) return res.status(404).json({ error: "Failed to find inserted message"});
-        console.log("New message was successfully inserted !", insertedMessage);
+
+        const fullMessage = await db.query.messages.findFirst({
+            where: eq(messages.id, insertedMessage.id),
+            with: {
+                owner: { columns: {username: true} }
+            }
+        })
+
+        const formattedMessages = {
+            id: insertedMessage.id.toString(),
+            username: fullMessage?.owner.username || "Visitor",
+            message: insertedMessage.message,
+            createdAt: insertedMessage.createdAt.toISOString(),
+            likeCount: insertedMessage.likeCount
+        };
+
+        console.log("New message was successfully inserted !", formattedMessages);
             
         // Return success status with created message
-        res.status(201).json(insertedMessage);
+        res.status(201).json(formattedMessages);
     } catch (error) {
         console.error("Error trying to post message: ", error);
         res.status(500).json({ error: "Failed to post message" });
     }
 })
 
-// PUT message
-app.put("/api/messages/:id/like", async (req: Request, res: Response) => {
+// PUT message (Protected route)
+app.put("/api/messages/:id/like", authenticateToken, async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
         if (!id) return res.status(400).json({ error: "ID not found" });
@@ -81,29 +113,55 @@ app.put("/api/messages/:id/like", async (req: Request, res: Response) => {
             .set({ likeCount: sql`${messages.likeCount} + 1` }) // Increment only in backend
             .where(eq(messages.id, parseInt(id))) // eq: comparison function
             .returning();
-
         if(!updatedMessage) return res.status(404).json({ error: "Failed to find updated message"});
 
-        res.status(200).json(updatedMessage);
+        const fullMessage = await db.query.messages.findFirst({
+            where: eq(messages.id, updatedMessage.id),
+            with: {
+                owner: { columns:{ username: true } }
+            }
+        })
+
+        const formattedMessages = {
+            id: updatedMessage.id.toString(),
+            username: fullMessage?.owner.username || "Visitor",
+            message: updatedMessage.message,
+            createdAt: updatedMessage.createdAt.toISOString(),
+            likeCount: updatedMessage.likeCount
+        };
+
+        res.status(200).json(formattedMessages);
     } catch (error) {
         console.error("Error trying to update message: ", error);
         res.status(500).json({ error: "Failed to put message" });
     }
 })
 
-// DELETE route
-app.delete("/api/messages/:id", async (req: Request, res: Response) => {
+// DELETE route (Protected and Secure route)
+app.delete("/api/messages/:id", authenticateToken, async (req: Request, res: Response) => {
     try {
         const {id} = req.params;
         if (!id) return res.status(400).json({ error: "ID not found"});
 
+        const messageId = parseInt(id);
+        const userId = req.user?.userId;
+        
+        const [targetMessage] = await db.select().from(messages)
+            .where(eq(messages.id, messageId))
+            .limit(1);
+        if (!targetMessage) return res.status(404).json({ error: "Message to be deleted not found"});
+
+        // Security check -> logged used need to own the message to be able to delete it
+        if (targetMessage.ownerId !== userId ) return res.status(403).json({ error: "Forbidden: User doesn't own the message"})
+
+        // If user own message then safe to delete
         const [deletedMessage] = await db.delete(messages)
-            .where(eq(messages.id, parseInt(id)))
+            .where(eq(messages.id, messageId))
             .returning();
-        
         if (!deletedMessage) return res.status(404).json({ error: "Failed to find deleted message"});
-        
-        res.status(200).json(deletedMessage);
+
+        // Only need to send back id
+        res.status(200).json({ id: deletedMessage.id.toString() });
     } catch (error) {
         console.error("Error trying to delete message: ", error);
         res.status(500).json({ error: "Failed to delete message" });

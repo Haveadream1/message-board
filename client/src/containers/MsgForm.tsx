@@ -1,64 +1,53 @@
-import React from "react";
+import React, { useState } from "react";
 import { useMessage } from "../context/MessageContext";
-import { MsgInput } from "../components/MsgInput";
+import { MsgInput } from "../components/MsgInput";;
 
 interface AsideProps {
     onOpenForm: () => void;
 }
 
 export default function MsgForm ({ onOpenForm }: AsideProps) {
-    const {formData, handleDataChange, storeMessages,  cleanForm} = useMessage();
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const {formData, storeMessages, setFormData} = useMessage();
 
-    const handleSubmit = (e: React.SubmitEvent) => {
+    const handleSubmit = async (e: React.SubmitEvent) => {
         e.preventDefault();
 
         // Form validation
-        // trim method to avoid false validation with "white-space"
-        if (!formData.username.trim() || !formData.message.trim()) {
-            console.log("Alert: empty inputs");
-            return;
+            // trim method to avoid false validation with "white-space"
+        if (!formData.trim()) return;
+        setIsSubmitting(true);
+
+        try {
+            storeMessages(formData);
+
+            // Success, clean state and close form
+            onOpenForm();
+            setFormData("");
+        } catch (error) {
+            console.error("Message submit error: ", error);
+        } finally {
+            setIsSubmitting(false);
         }
-
-        storeMessages({
-            username: formData.username,
-            message: formData.message,
-        })
-
-        onOpenForm();
-        cleanForm();
     }
 
     const onCancel = () => {
         onOpenForm();
-        cleanForm();
+        setFormData("");
     }
 
     return (
         <>
             <form id="message-form" onSubmit={handleSubmit} className="bg-white p-5 border-2 border-light-grey rounded-md flex flex-col gap-2">
-                <MsgInput
-                    id= "username-input"
-                    type= "text"
-                    label= "Username"
-                    isInputEmpty= {!formData.username.trim()}
-                    errorText= "*Username cannot be empty"
-                    formData= {formData}
-                    handleInput= {handleDataChange}
-                    placeholder= "Your username (e.g Haveadream)"
+                <MsgInput 
+                    id="username-input"
+                    label="Message"
+                    isInputEmpty={!formData.trim()}
+                    errorText="*Message cannot be empty" 
+                    disabled={isSubmitting}
+                    onChange={(e) => setFormData(e.currentTarget.value)}
                 />
 
-                <MsgInput
-                    id= "message-input"
-                    type= "textarea"
-                    label= "Message"
-                    isInputEmpty= {!formData.message.trim()}
-                    errorText= "*Message cannot be empty"
-                    formData= {formData}
-                    handleInput= {handleDataChange}
-                    placeholder= "Your message" 
-                />
-
-                // TODO: ? create component for Msgbutton ?
                 <div className="flex justify-end gap-5">
                     <button 
                         type="submit" 

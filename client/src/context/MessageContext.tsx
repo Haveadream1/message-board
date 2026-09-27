@@ -6,28 +6,23 @@ import { useAuth } from "./AuthContext";
 // TODO: move into a config file 
 const API_URL = "http://localhost:3000/api";
 
-// Define types of message state
-interface FormType {
-    username: string;
-    message: string;
-}
-
-export interface Message extends FormType {
+// Define types
+interface Message {
     id: string;
+    message: string;
     createdAt: string;
-    likeCount: number
+    likeCount: number;
 }
 
 // Define the shape of the entire context value
 interface MessageContextType {
     isLoaderEnable: boolean;
     messages: Message[];
-    formData: FormType;
-    handleDataChange: (label: keyof FormType, value: string) => void;
-    storeMessages: (newMessage: {username: string, message: string}) => Promise<void>;
-    cleanFormData: () => void;
+    formData: string;
+    storeMessages: (messageText: string) => Promise<void>;
     updateLikeCount: (id: string) => Promise<void>;
     deleteMessage: (id: string) => Promise<void>;
+    setFormData: (formData: string) => void;
 }
 
 // Tell TypeScript the context can be MessageContextType OR null initially
@@ -36,11 +31,7 @@ const MessageContext = createContext<MessageContextType | null>(null);
 export function MessageProvider({ children }: { children: React.ReactNode}) {
     const [isLoaderEnable, setIsLoaderEnable] = useState(true);
     const [messages, setMessages] = useState<Message[]>([]);
-
-    const [formData, setFormData] = useState<FormType>({
-        username: "",
-        message: ""
-    });
+    const [formData, setFormData] = useState("");
 
     // Get value and function from auth context
     const {token, logout} = useAuth();
@@ -51,7 +42,6 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
             try {
                 const response = await fetch(`${API_URL}/messages`);
                 const data = await response.json();
-                console.log(data);
                 setMessages(data);
             } catch (error) {
                 console.error("Failed to fetch messages: ", error);
@@ -62,14 +52,13 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
         fetchMessages();
     }, []);
 
-    const pushMessageToArr = (newMessage : Message) => {
-        setMessages((prev) => [...prev, newMessage]);
-    }
-
     // Toast library handle the promise rejection, we can drop try/catch
     const storeMessages = async (messageText: string) => {
         // Check user token
-        if (!token) return toast.error("You must be logged in to post");
+        if (!token) {
+            toast.error("You must be logged in to post");
+            return;
+        }
 
         const storeOperation = async () => {
             const response = await fetch(`${API_URL}/messages`, {
@@ -94,10 +83,11 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
         toast.promise(storeOperation(), {
             loading: "Storing message...",
             success: (savedMessage) => {
-                pushMessageToArr(savedMessage);
+                setMessages((prev) => [...prev, savedMessage]);
+                setFormData("");
                 return "Successfully stored message"
             },
-            error: "Failed to save message"
+            error: (err) => err.message // Error defined in the backend will be displayed
         })
     }
 
@@ -131,7 +121,7 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
                 );
                 return "Successfully updated likes";
             },
-            error: "Failed to update like count"
+            error: (err) => err.message
         })
     }
 
@@ -139,7 +129,10 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
         const confirmation = window.confirm("Are you sure you want to delete this message ?");
         if (!confirmation) return; // Stop execution if user cancel deletion
 
-        if (!token) return toast.error("You must be logged to delete messages")
+        if (!token) {
+            toast.error("You must be logged in to post");
+            return;
+        }
 
         const deleteOperation = async () => {
             const response = await fetch(`${API_URL}/messages/${id}`, {
@@ -163,31 +156,13 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
 
         toast.promise(deleteOperation(), {
             loading: "Deleting message...",
-            success: (deletedMessage) => {
-                // Debugg
-                console.log(deletedMessage);
-
+            success: () => {
                 setMessages((prev) => 
                     prev.filter((message) => message.id !== id)
                 )
                 return "Successfully deleted message";
             }, 
-            error: "Failed to delete message"
-        })
-    }
-
-    // "keyof" ensures we can ONLY pass "username" or "message"
-    const handleDataChange = (label: keyof FormType, value: string) => {
-        setFormData((prev) => ({
-            ...prev,
-            [label]: value
-        }))
-    }
-
-    const cleanFormData = () => {
-        setFormData({
-            username: "",
-            message: ""
+            error: (err) => err.message
         })
     }
 
@@ -195,11 +170,10 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
         isLoaderEnable,
         messages,
         formData,
-        handleDataChange,
-        cleanFormData,
         storeMessages,
         updateLikeCount,
         deleteMessage,
+        setFormData
     };
 
     return (

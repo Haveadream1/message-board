@@ -1,16 +1,18 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { useAuth } from "./AuthContext";
 
-// ? Might need to be a env variable after deploy 
-const API_URL = "http://localhost:3000/api/messages";
+// ? Might need to be a env variable after deploy
+// TODO: move into a config file 
+const API_URL = "http://localhost:3000/api";
 
 // Define types of message state
-interface FormState {
+interface FormType {
     username: string;
     message: string;
 }
 
-export interface Message extends FormState {
+export interface Message extends FormType {
     id: string;
     createdAt: string;
     likeCount: number
@@ -18,35 +20,38 @@ export interface Message extends FormState {
 
 // Define the shape of the entire context value
 interface MessageContextType {
-    formData: FormState;
-    handleDataChange: (label: keyof FormState, value: string) => void;
-    messages: Message[];
-    storeMessages: (newMessage: {username: string, message: string}) => void;
-    cleanForm: () => void;
-    updateLikeCount: (id: string) => void;
-    deleteMessage: (id: string) => void;
     isLoaderEnable: boolean;
+    messages: Message[];
+    formData: FormType;
+    handleDataChange: (label: keyof FormType, value: string) => void;
+    storeMessages: (newMessage: {username: string, message: string}) => Promise<void>;
+    cleanFormData: () => void;
+    updateLikeCount: (id: string) => Promise<void>;
+    deleteMessage: (id: string) => Promise<void>;
 }
 
 // Tell TypeScript the context can be MessageContextType OR null initially
 const MessageContext = createContext<MessageContextType | null>(null);
 
 export function MessageProvider({ children }: { children: React.ReactNode}) {
-    const [isLoaderEnable, setIsLoaderEnable] = useState(false);
+    const [isLoaderEnable, setIsLoaderEnable] = useState(true);
     const [messages, setMessages] = useState<Message[]>([]);
 
-    const [formData, setFormData] = useState<FormState>({
+    const [formData, setFormData] = useState<FormType>({
         username: "",
         message: ""
     });
 
+    // Get value and function from auth context
+    const {token, logout} = useAuth();
+
     // !Note: don't toast on mount -> only user interactions
     useEffect(() => {
         const fetchMessages = async () => {
-            setIsLoaderEnable(true);
             try {
-                const response = await fetch(API_URL);
+                const response = await fetch(`${API_URL}/messages`);
                 const data = await response.json();
+                console.log(data);
                 setMessages(data);
             } catch (error) {
                 console.error("Failed to fetch messages: ", error);
@@ -62,13 +67,26 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
     }
 
     // Toast library handle the promise rejection, we can drop try/catch
-    const storeMessages = async (newMessage: { username: string, message: string }) => {
+    const storeMessages = async (messageText: string) => {
+        // Check user token
+        if (!token) return toast.error("You must be logged in to post");
+
         const storeOperation = async () => {
-            const response = await fetch(API_URL, {
+            const response = await fetch(`${API_URL}/messages`, {
                 method: "POST",
-                headers: {"Content-type": "application/json"},
-                body: JSON.stringify(newMessage)
+                headers: {
+                    "Content-type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify({message: messageText})
             })
+
+            // Logout if token is expired
+            if (response.status === 401) {
+                logout();
+                throw new Error("Session expired, please log in again")
+            }
+
             if (!response.ok) throw new Error("Failed to post message");
             return await response.json();
         }
@@ -86,10 +104,20 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
     const updateLikeCount = async (id: string) => {
         const updateOperation = async () => {
             // Backend handle the incrementation
-            const response = await fetch(`${API_URL}/${id}/like`, {
+            const response = await fetch(`${API_URL}/messages/${id}/like`, {
                 method: "PUT",
-                headers: {"Content-type": "application/json"}
+                headers: {
+                    "Content-type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
             })
+
+            if (response.status === 401) {
+                logout();
+                throw new Error("Session expired, please log in again");
+            }
+
+            if (response.status === 409) throw new Error("You already liked this message");
 
             if (!response.ok) throw new Error("Failed to update like count");
             return await response.json();
@@ -111,11 +139,24 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
         const confirmation = window.confirm("Are you sure you want to delete this message ?");
         if (!confirmation) return; // Stop execution if user cancel deletion
 
+        if (!token) return toast.error("You must be logged to delete messages")
+
         const deleteOperation = async () => {
-            const response = await fetch(`${API_URL}/${id}`, {
+            const response = await fetch(`${API_URL}/messages/${id}`, {
                 method: "DELETE",
-                headers: {"Content-type": "application/json"}
+                headers: {
+                    "Content-type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
             })
+
+            if (response.status === 401) {
+                logout();
+                throw new Error("Session expired, please log in again")
+            }
+
+            if (response.status === 403) throw new Error("Forbidden: You can only delete your own messages  ");
+
             if (!response.ok) throw new Error("Failed to delete message");
             return await response.json();
         }
@@ -136,14 +177,14 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
     }
 
     // "keyof" ensures we can ONLY pass "username" or "message"
-    const handleDataChange = (label: keyof FormState, value: string) => {
+    const handleDataChange = (label: keyof FormType, value: string) => {
         setFormData((prev) => ({
             ...prev,
             [label]: value
         }))
     }
 
-    const cleanForm = () => {
+    const cleanFormData = () => {
         setFormData({
             username: "",
             message: ""
@@ -151,14 +192,14 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
     }
 
     const value: MessageContextType = {
+        isLoaderEnable,
+        messages,
         formData,
         handleDataChange,
-        messages,
-        cleanForm,
+        cleanFormData,
         storeMessages,
         updateLikeCount,
         deleteMessage,
-        isLoaderEnable
     };
 
     return (

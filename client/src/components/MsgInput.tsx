@@ -1,20 +1,17 @@
-interface FormData {
-    username: string;
-    message: string;
-}
+import type React from "react";
 
 interface InputProps {
     id: string;
-    type: "text" | "textarea"; // Restrict to only those 2 values
     label: string;
     isInputEmpty: boolean;
     errorText?: string;
-    formData: FormData;
-    handleInput: (label: "username" | "message", value: string) => void;
-    placeholder: string;
+    value: string;
+    placeholder?: string;
+    disabled: boolean;
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-export function MsgInput({ id, type, label,isInputEmpty, errorText, formData, handleInput, placeholder }: InputProps) {
+export function MsgInput({ id, label, isInputEmpty, errorText, value, placeholder, disabled, onChange }: InputProps) {
     return (
         <>
             <div className="flex gap-4 items-baseline">
@@ -24,25 +21,15 @@ export function MsgInput({ id, type, label,isInputEmpty, errorText, formData, ha
                 )}
             </div>
 
-            {type === "text" ? (
-                <input 
-                    id={id}
-                    value={formData.username}
-                    onInput={(e) => handleInput("username", e.currentTarget.value)} 
-                    type="text"
-                    placeholder={placeholder}
-                    className="bg-violet p-1.5 border-2 border-light-grey rounded-md"
-                />   
-            ) : (
-                <textarea 
-                    id={id}
-                    value={formData.message}
-                    onInput={(e) => handleInput("message", e.currentTarget.value)} 
-                    rows={4} 
-                    placeholder={placeholder}
-                    className="bg-violet p-1.5 border-2 border-light-grey rounded-md" 
-                />
-            )}
+            <textarea 
+                id={id}
+                value={value}
+                rows={4} 
+                placeholder={placeholder}
+                className="bg-violet p-1.5 border-2 border-light-grey rounded-md" 
+                disabled={disabled}
+                onChange={onChange}
+            />
         </>
     )
 };

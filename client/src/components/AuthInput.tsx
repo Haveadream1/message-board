@@ -2,32 +2,23 @@ interface InputProps {
     id: string;
     label?: string;
     name: string;
-    autocomplete?: string;
+    value?: string;
+    autoComplete?: string;
     isInputCheckbox?: boolean;
+    disabled: boolean;
+    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-export function AuthInput ({id, label, name, autocomplete, isInputCheckbox}: InputProps) {
+export function AuthInput ({id, label, name, value, autoComplete, isInputCheckbox, disabled, onChange}: InputProps) {
     return (
         <>
-            <label htmlFor={id} className="sr-only">
-                {label}
-            </label>
-            <input 
-                type="text"
-                name={name}
-                id={id}
-                placeholder={label}
-                autoComplete={autocomplete}
-                className="bg-gray-100 p-3 rounded-md border border-transparent focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition"
-                required
-            />
-
-            {isInputCheckbox && (
+            {isInputCheckbox ? (
                 <label htmlFor={id} className="flex items-center gap-3 cursor-pointer group">
                     <input 
                         type="checkbox" 
                         id={id}
                         name={name}
+                        disabled={disabled}
                         className="w-4 h-4 border-gray-300 rounded focus:ring-blue-500 cursor-pointer"
                         required
                     />
@@ -35,6 +26,24 @@ export function AuthInput ({id, label, name, autocomplete, isInputCheckbox}: Inp
                         I agree to the <a href="/terms" className="underline text-blue-600 hover:text-blue-800">terms and conditions</a>
                     </span>
                 </label>
+            ): (
+                <>
+                    <label htmlFor={id} className="sr-only">
+                        {label}
+                    </label>
+                    <input 
+                        type={name === "username" ? "text": "password"}
+                        id={id}
+                        name={name}
+                        value={value}
+                        placeholder={label}
+                        autoComplete={autoComplete}
+                        disabled={disabled}
+                        className="bg-gray-100 p-3 rounded-md border border-transparent focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition"
+                        required
+                        onChange={onChange}
+                    />
+                </>
             )}
         </>
     )

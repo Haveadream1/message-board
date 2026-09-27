@@ -14,7 +14,7 @@ interface InputProps {
     placeholder: string;
 }
 
-export function Input({ id, type, label,isInputEmpty, errorText, formData, handleInput, placeholder }: InputProps) {
+export function MsgInput({ id, type, label,isInputEmpty, errorText, formData, handleInput, placeholder }: InputProps) {
     return (
         <>
             <div className="flex gap-4 items-baseline">

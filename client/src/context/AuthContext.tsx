@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { API_URL } from "../utils/config";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 interface User {
     id: number;
@@ -35,7 +36,9 @@ export function AuthProvider({ children }: { children: React.ReactNode}) {
         username: "",
         password: ""
     })
-    
+
+    const navigate = useNavigate();
+        
     // Check for existing token on mount
     useEffect(() => {
         const storedToken = localStorage.getItem("authToken");
@@ -67,9 +70,10 @@ export function AuthProvider({ children }: { children: React.ReactNode}) {
                 setToken(data.token);
                 localStorage.setItem("authUser", JSON.stringify(data.user));
                 localStorage.setItem("authToken", data.token);
+                navigate("/");
                 return `Welcome back, ${data.user.username}`
             },
-            error: (err) => {return `Login failed ${err.message}`}
+            error: (err) => err.message
         })
     }
 
@@ -91,9 +95,10 @@ export function AuthProvider({ children }: { children: React.ReactNode}) {
                 setToken(data.token);
                 localStorage.setItem("authUser", JSON.stringify(data.user));
                 localStorage.setItem("authToken", data.token);
+                navigate("/");
                 return `Account created! Welcome ${data.user.username}`
             },
-             error: (err) => {return `Register failed ${err.message}`}
+            error: (err) => err.message
         })
     } 
 
@@ -107,6 +112,7 @@ export function AuthProvider({ children }: { children: React.ReactNode}) {
         toast.success("Successfully logged out!");
     }
 
+    // keyof ensure we can only pass label defined in interface
     const handleDataChange = (label: keyof FormType, value: string) => {
         setFormData((prev) => ({
             ...prev,

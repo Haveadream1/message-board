@@ -1,3 +1,6 @@
+import { AuthButton } from "../components/AuthButton";
+import { AuthInput } from "../components/AuthInput";
+
 export default function AuthForm () {
     return (    
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 p-8 rounded-md bg-white shadow-lg">
@@ -33,44 +36,23 @@ export default function AuthForm () {
                 </div>
 
                 <form id="auth-form" className="flex flex-col gap-4 mt-2">
-                    <label htmlFor="username-input" className="sr-only">
-                        Username
-                    </label>
-                    <input 
-                        type="text"
-                        name="username"
+                    <AuthInput 
                         id="username-input"
-                        placeholder="Username"
-                        autoComplete="username" 
-                        className="bg-gray-100 p-3 rounded-md border border-transparent focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition"
-                        required
+                        label="Username"
+                        name="username"
+                        autocomplete="username" 
                     />
-
-                    <label htmlFor="password-input" className="sr-only">
-                        Password
-                    </label>
-                    <input 
-                        type="text"
-                        name="password"
+                    <AuthInput 
                         id="password-input"
-                        placeholder="Password"
-                        autoComplete="new-password" 
-                        className="bg-gray-100 p-3 rounded-md border border-transparent focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition"
-                        required
+                        label="Password"
+                        name="password"
+                        autocomplete="new-password" 
                     />
-
-                    <label htmlFor="terms-checkbox" className="flex items-center gap-3 cursor-pointer group">
-                        <input 
-                            type="checkbox" 
-                            id="terms-checkbox"
-                            name="terms"
-                            className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 cursor-pointer"
-                            required
-                        />
-                        <span className="text-sm text-gray-600 group-hover:text-gray-800 transition">
-                            I agree to the <a href="/terms" className="underline text-blue-600 hover:text-blue-800">terms and conditions</a>
-                        </span>
-                    </label>
+                    <AuthInput 
+                        isInputCheckbox={true}
+                        id="terms-checkbox"
+                        name="terms-and-conditions"
+                    />
 
                     <button 
                         type="submit"
@@ -90,43 +72,23 @@ export default function AuthForm () {
                     </div>
                 </div>
 
-                
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                    <button
-                        type="button"
-                        aria-label="Continue with Github"
-                        className="flex items-center justify-center gap-2 py-2 px-4 rounded-md border border-gray-200 text-sm font-medium text-gray-700 hover:bg-gray-50 transition"
-                    >
-                        Github
-                    </button>
-                    <button
-                        type="button"
-                        aria-label="Continue with Kakao"
-                        className="flex items-center justify-center gap-2 py-2 px-4 rounded-md border border-gray-200 text-sm font-medium text-gray-700 hover:bg-gray-50 transition"
-                    >
-                        Kakao
-                    </button>
-                    <button
-                        type="button"
-                        aria-label="Continue with Line"
-                        className="flex items-center justify-center gap-2 py-2 px-4 rounded-md border border-gray-200 text-sm font-medium text-gray-700 hover:bg-gray-50 transition"
-                    >
-                        Line
-                    </button>
-                    <button
-                        type="button"
-                        aria-label="Continue with WeChat"
-                        className="flex items-center justify-center gap-2 py-2 px-4 rounded-md border border-gray-200 text-sm font-medium text-gray-700 hover:bg-gray-50 transition"
-                    >
-                        WeChat
-                    </button>
-                    <button
-                        type="button"
-                        aria-label="Continue with Google"
-                        className="flex items-center justify-center gap-2 py-2 px-4 rounded-md border border-gray-200 text-sm font-medium text-gray-700 hover:bg-gray-50 transition"
-                    >
-                        Google
-                    </button>
+                    {/* Can do a map with an array, but might add logo so img src later */}
+                    <AuthButton 
+                        name="Github"
+                    />
+                    <AuthButton 
+                        name="Kakao"
+                    />
+                    <AuthButton 
+                        name="Line"
+                    />
+                    <AuthButton 
+                        name="Wechat"
+                    />
+                    <AuthButton 
+                        name="Google"
+                    />
                 </div>
             </section>
         </div>
@@ -134,7 +96,6 @@ export default function AuthForm () {
 }
 
 // TODO: define terms and conditions
-// TODO: create components, clean
 // ?? Keep required on inputs if we create validation or keep it like that
 
 // grid-cols-1 md:grid-cols-2

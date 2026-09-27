@@ -7,13 +7,21 @@ interface User {
     username: string;
 }
 
+interface FormType {
+    username: string;
+    password: string;
+}
+
 interface AuthContextType {
     token: string | null;
     user: User | null;
     isLoading: boolean;
+    formData: FormType;
     login: (username: string, password: string) => Promise<void>;
     register: (username: string, password: string) => Promise<void>;
     logout: () => void;
+    handleDataChange: (label: keyof FormType, value: string) => void;
+    cleanFormData: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -22,6 +30,11 @@ export function AuthProvider({ children }: { children: React.ReactNode}) {
     const [token, setToken] = useState<string | null>(null);
     const [user, setUser] = useState<User | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+
+    const [formData, setFormData] = useState<FormType>({
+        username: "",
+        password: ""
+    })
     
     // Check for existing token on mount
     useEffect(() => {
@@ -94,13 +107,30 @@ export function AuthProvider({ children }: { children: React.ReactNode}) {
         toast.success("Successfully logged out!");
     }
 
+    const handleDataChange = (label: keyof FormType, value: string) => {
+        setFormData((prev) => ({
+            ...prev,
+            [label]: value
+        }))
+    }
+
+    const cleanFormData = () => {
+        setFormData({
+            username: "",
+            password: ""
+        })
+    }
+
     const value: AuthContextType = {
         token,
         user,
         isLoading,
+        formData,
         register,
         login,
-        logout
+        logout,
+        handleDataChange,
+        cleanFormData
     }
 
     return (

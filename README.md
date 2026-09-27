@@ -31,9 +31,10 @@ For this project we will use Tailwindcss, Express, React and Typescript, Postgre
 * Add media-queries or box
 
 <!-- ?? Should the user Id be handled with the like so we can only like a button once, if click again then dislike -->
-<!-- ! Loading state for like button to disable multiple press -->
 <!-- !: reset the database ID -->
-<!-- ! Create a TS file to handle the types, share across files  -->
+<!-- TODO: Create a TS file to handle the types, share across files  -->
+<!-- ! Change JWT in production to env file -->
+<!-- TODO: verify semantic -->
 
 ### Milestones
 * Create home page layout
@@ -50,10 +51,17 @@ For this project we will use Tailwindcss, Express, React and Typescript, Postgre
 * Connect to database PostgreSQL via NEON
 * Use Drizzle ORM, to introduce type-safe query
 * Create the PUT/DELETE route
+* Improve user experience with loading state, better alert with toast, confirmation on deletion
+* Implement authentification with JWS tokens and password hashing
+* Create authentication middleware -> stateless authentication (server doesn't keep the session in memory)
+* Implement authorization for delete route -> can now only delete own messages !
+* Implement anti-span for likes
+* Create auth (register) form
 
--> Improve user experience with loading state, better alert with toast
 -> Reply (UI)
--> Authentification
+-> Error page
+    
+Authorization (who are you?) vs Authentication (what are you allowed to do?)
 
 ### Notes
 * Remove client readme
@@ -85,8 +93,17 @@ Each messages:
 * If own message
     * Edit / Delete 
 
+// JWT token contains all the session details (user info), without the need to store it in the server -> stateless
+// The authentification is then done by only checking the token signature with the secrete key
+// Tested with `Thunder client` by creating a POST request with path and body (username, password)
+// -The goal of the JWT in the login route is to give the frontend a cryptographically signed "Proof of Identity" that it can use for all future requests.
+
 ## Credits
 react-hot-toast
 Lucid
 Drizzle ORM
 Tailwind CSS
+PostgreSQL with Neon
+bcrypt (hash passwords)
+jsonwebtoken JWT (generate secure token -> proves usre is logged)
+Thunder client (mock API request)

@@ -14,9 +14,8 @@ const PORT = process.env.PORT || 3000;
 // Middleware
 app.use(cors()); // Allows frontend to talk to backend
 app.use(express.json()); // Parse incoming JSON requests
-app.use("/api/auth", authRouter) // Mount authentication routes at specificied path
+app.use("/api/auth", authRouter) // Mount authentication routes at specified path
 
-// Routes
 // Health route
 app.get("/health", (req: Request, res: Response) => {
     res.json({
@@ -24,8 +23,6 @@ app.get("/health", (req: Request, res: Response) => {
         timestamp: new Date().toISOString()
     })
 })
-
-// TODO: clean the formatted messages
 
 // GET all messages
 app.get("/api/messages", async (req: Request, res: Response) => {

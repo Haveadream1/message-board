@@ -36,6 +36,7 @@ export default function Main() {
                             date={message.createdAt.slice(0, 16).replace("T", " ")}
                             likeCount={message.likeCount}
                             isDeleteVisible={displayDeleteIcon(message.username)}
+                            isMessageLiked={true} // Handle with a function later
                             onLikeClick={() => updateLikeCount(message.id)}
                             onDeleteClick={() => deleteMessage(message.id)}
                         />

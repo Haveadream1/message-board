@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useMessage } from "../context/MessageContext";
-import { MsgInput } from "../components/MsgInput";;
+import { MsgInput } from "../components/MsgInput";import toast from "react-hot-toast";
+;
 
 interface AsideProps {
     onOpenForm: () => void;
@@ -15,7 +16,10 @@ export default function MsgForm ({ onOpenForm }: AsideProps) {
 
         // Form validation
             // trim method to avoid false validation with "white-space"
-        if (!formData.trim()) return;
+        if (!formData.trim()) {
+            toast.error("Message cannot be empty");
+            return;
+        };
         setIsSubmitting(true);
 
         try {
@@ -38,12 +42,17 @@ export default function MsgForm ({ onOpenForm }: AsideProps) {
 
     return (
         <>
-            <form id="message-form" onSubmit={handleSubmit} className="bg-white p-5 border-2 border-light-grey rounded-md flex flex-col gap-2">
+            <form 
+                id="message-form"
+                onSubmit={handleSubmit}
+                className="bg-white p-5 border-2 border-light-grey rounded-md flex flex-col gap-4"
+            >
                 <MsgInput 
                     id="username-input"
                     label="Message"
                     isInputEmpty={!formData.trim()}
                     errorText="*Message cannot be empty" 
+                    value={formData}
                     disabled={isSubmitting}
                     onChange={(e) => setFormData(e.currentTarget.value)}
                 />
@@ -52,18 +61,26 @@ export default function MsgForm ({ onOpenForm }: AsideProps) {
                     <button 
                         type="submit" 
                         form="message-form"
-                        className="bg-blue pt-1 pr-8 pb-1 pl-8 text-white rounded-md" >
-                        Post message
+                        className="rounded-md text-white bg-blue-600 hover:bg-blue-700 font-medium px-7 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition disabled:cursor-not-allowed disabled:opacity-50" 
+                        disabled={isSubmitting}
+                    >
+                        { isSubmitting ? "Posting..." : "Post message" }
                     </button>
 
-                    <button 
-                        type="button"
-                        onClick={onCancel}
-                        className="bg-red pt-1 pr-8 pb-1 pl-8 text-white rounded-md" >
-                        Cancel
-                    </button>
+                    {!isSubmitting && (
+                        <button 
+                            type="button"
+                            onClick={onCancel}
+                            className="rounded-md text-white bg-red-600 hover:bg-red-700 font-medium px-7 py-2 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition disabled:cursor-not-allowed disabled:opacity-50"
+                            disabled={isSubmitting}
+                        >
+                            Cancel
+                        </button>
+                    )}
                 </div>
             </form>
         </>
     )
 }
+
+// Form is hidden directly after submit but to avoid error, disable button on submit

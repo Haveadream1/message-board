@@ -16,6 +16,7 @@ interface MessageContextType {
     isLoaderEnable: boolean;
     messages: Message[];
     formData: string;
+    likedMessagesId: Set<string>;
     storeMessages: (messageText: string) => Promise<void>;
     updateLikeCount: (id: string) => Promise<void>;
     deleteMessage: (id: string) => Promise<void>;
@@ -29,6 +30,7 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
     const [isLoaderEnable, setIsLoaderEnable] = useState(true);
     const [messages, setMessages] = useState<Message[]>([]);
     const [formData, setFormData] = useState("");
+    const [likedMessagesId, setLikedMessagesId] = useState<Set<string>>(new Set());
 
     // Get value and function from auth context
     const {token, logout} = useAuth();
@@ -38,6 +40,8 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
         const fetchMessages = async () => {
             try {
                 const response = await fetch(`${API_URL}/messages`);
+                if (!response.ok) throw new Error("Failed to get messages");
+
                 const data = await response.json();
                 setMessages(data);
             } catch (error) {
@@ -48,6 +52,26 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
         }
         fetchMessages();
     }, []);
+
+    useEffect(() => {
+        const fetchLikedMessages = async () => {
+            if (!token) return; // Only fetch if user is logged in
+
+            try {
+                const response = await fetch(`${API_URL}/messages/likes`, {
+                    headers: { "Authorization": `Bearer ${token}`}
+                });
+                if (!response.ok) throw new Error("Failed to get liked messages");
+
+                // Set has faster lookups O(1) with .has compared to O(n) with array .includes()
+                const data = await response.json();
+                setLikedMessagesId(new Set(data));
+            } catch (error) {
+                console.error("Failed to fetch liked messages: ", error);
+            }
+        }
+        fetchLikedMessages();
+    }, [token]);
 
     // Toast library handle the promise rejection, we can drop try/catch
     const storeMessages = async (messageText: string) => {
@@ -167,6 +191,7 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
         isLoaderEnable,
         messages,
         formData,
+        likedMessagesId,
         storeMessages,
         updateLikeCount,
         deleteMessage,

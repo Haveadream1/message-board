@@ -166,6 +166,27 @@ app.put("/api/messages/:id/like", authenticateToken, async (req: Request, res: R
     }
 })
 
+// GET route for likes
+app.get("/api/messages/likes", authenticateToken, async (req: Request, res: Response) => {
+    try {
+        const userId = req.user?.userId;
+        if (!userId) return res.status(401).json({ error: "Unauthorized"});
+
+        // Select only the message ID of the messages liked by user
+        const likedMessages = await db.select({ messageId: messageLikes.messageId })
+            .from(messageLikes)
+            .where(eq(messageLikes.userId, userId));
+        
+        // Create an array with the id converted to string
+        const likedMessagesId = likedMessages.map((like) => like.messageId.toString());
+        
+        res.status(200).json(likedMessagesId);
+    } catch (error) {
+        console.error("Error trying to get liked messages: ", error);
+        res.status(500).json({ error: "Failed to get liked messages" });
+    }
+})
+
 // DELETE route (Protected and Secure route)
 app.delete("/api/messages/:id", authenticateToken, async (req: Request, res: Response) => {
     try {

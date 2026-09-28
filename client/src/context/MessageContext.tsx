@@ -18,7 +18,8 @@ interface MessageContextType {
     formData: string;
     likedMessagesId: Set<string>;
     storeMessages: (messageText: string) => Promise<void>;
-    updateLikeCount: (id: string) => Promise<void>;
+    likeMessage: (id: string) => Promise<void>;
+    dislikeMessage: (id: string) => Promise<void>;
     deleteMessage: (id: string) => Promise<void>;
     setFormData: (formData: string) => void;
 }
@@ -112,8 +113,8 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
         })
     }
 
-    const updateLikeCount = async (id: string) => {
-        const updateOperation = async () => {
+    const likeMessage = async (id: string) => {
+        const likeOperation = async () => {
             // Backend handle the incrementation
             const response = await fetch(`${API_URL}/messages/${id}/like`, {
                 method: "PUT",
@@ -134,7 +135,7 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
             return await response.json();
         }
 
-        toast.promise(updateOperation(), {
+        toast.promise(likeOperation(), {
             loading: "Updating likes...",
             success: (updatedMessage) => {
                 setMessages((prev) => 
@@ -144,6 +145,39 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
                 // Update the state to display after click
                 setLikedMessagesId((prev) => new Set(prev).add(id));
                 return "Successfully updated likes";
+            },
+            error: (err) => err.message
+        })
+    }
+
+    const dislikeMessage = async (id: string) => {
+        // No need for confirmation on dislike as it's not an irreversible operation
+        const dislikeOperation = async () => {
+            const response = await fetch(`${API_URL}/messages/${id}/dislike`, {
+                method: "DELETE",
+                headers: {
+                    "Content-type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            })
+            if (!response.ok) throw new Error("Failed to dislike messsage");
+            return await response.json();
+        }
+
+        toast.promise(dislikeOperation(), {
+            loading: "Disliking message...",
+            success: (updatedMessage) => {
+                setMessages((prev) => 
+                    prev.map((message) => message.id === id ? updatedMessage : message)
+                );
+
+                // Create a copy of set to remove id from it
+                setLikedMessagesId((prev) => {                    
+                    const copySet = new Set(prev);
+                    copySet.delete(id);
+                    return copySet;
+                })
+                return "Message disliked!"
             },
             error: (err) => err.message
         })
@@ -196,7 +230,8 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
         formData,
         likedMessagesId,
         storeMessages,
-        updateLikeCount,
+        likeMessage,
+        dislikeMessage,
         deleteMessage,
         setFormData
     };

@@ -14,10 +14,15 @@ interface InputProps {
 export function MsgInput({ id, label, isInputEmpty, errorText, value, placeholder, disabled, onChange }: InputProps) {
     return (
         <>
-            <div className="flex gap-4 items-baseline">
-                <label htmlFor={id}>{label}</label>
+            <div className="flex gap-5 items-baseline">
+                <label 
+                    htmlFor={id}
+                    className="text-xl"
+                >
+                    {label}
+                </label>
                 { isInputEmpty && (
-                    <small className="text-red">{errorText}</small>
+                    <small className="text-red-600 font-medium">{errorText}</small>
                 )}
             </div>
 
@@ -26,7 +31,7 @@ export function MsgInput({ id, label, isInputEmpty, errorText, value, placeholde
                 value={value}
                 rows={4} 
                 placeholder={placeholder}
-                className="bg-violet p-1.5 border-2 border-light-grey rounded-md" 
+                className="bg-gray-100 p-3 rounded-md border border-transparent focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition"
                 disabled={disabled}
                 onChange={onChange}
             />

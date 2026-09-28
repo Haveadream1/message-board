@@ -3,10 +3,19 @@ import { Aside } from "../components/Aside";
 import Message from "../components/Message";
 import { useMessage } from "../context/MessageContext";
 import MsgForm from "./MsgForm";
+import { useAuth } from "../context/AuthContext";
 
 export default function Main() {
     const [isFormEnable, setIsFormEnable] = useState(false);
     const { messages, updateLikeCount, deleteMessage, isLoaderEnable } = useMessage();
+    const {user} = useAuth();
+
+    const displayDeleteIcon = (username: string) => {
+        if (user?.username === username) {
+            return true;
+        }
+        return false;
+    }
     
     return (
         <main className="pt-5 flex flex-col gap-5 sm:grid grid-cols-[1fr_3fr]">
@@ -26,6 +35,7 @@ export default function Main() {
                             message={message.message}
                             date={message.createdAt.slice(0, 16).replace("T", " ")}
                             likeCount={message.likeCount}
+                            isDeleteVisible={displayDeleteIcon(message.username)}
                             onLikeClick={() => updateLikeCount(message.id)}
                             onDeleteClick={() => deleteMessage(message.id)}
                         />

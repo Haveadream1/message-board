@@ -3,13 +3,12 @@ interface MessageProps {
     message: string;
     date: string;
     likeCount: number;
+    isDeleteVisible: boolean;
     onLikeClick: () => void;
     onDeleteClick: () => void;
 }
 
-// ?? Is it good practice like in html to specify w and h
-
-export default function Message({ username, message, date, likeCount, onLikeClick, onDeleteClick }: MessageProps) {
+export default function Message({ username, message, date, likeCount, isDeleteVisible, onLikeClick, onDeleteClick }: MessageProps) {
     return (
         <div className="grid gap-4 p-5 bg-white border-2 rounded-md border-light-grey">
             <div className="flex justify-between">
@@ -36,11 +35,13 @@ export default function Message({ username, message, date, likeCount, onLikeClic
                     </div>
                 </div>
 
-                <div className="flex gap-2">
-                    <button id="reply-btn" type="button" onClick={onDeleteClick}>
-                        <img src="../src/assets/delete.svg" alt="Delete" width={20} height={20} />
-                    </button>
-                </div>
+                {isDeleteVisible && (
+                    <div className="flex gap-2">
+                        <button id="reply-btn" type="button" onClick={onDeleteClick}>
+                            <img src="../src/assets/delete.svg" alt="Delete" width={20} height={20} />
+                        </button>
+                    </div>
+                )}
             </div>
         </div>
     )

@@ -30,11 +30,14 @@ For this project we will use Tailwindcss, Express, React and Typescript, Postgre
     * Or optimistic UI ?
 * Add media-queries or box
 
-<!-- ?? Should the user Id be handled with the like so we can only like a button once, if click again then dislike -->
 <!-- !: reset the database ID -->
 <!-- TODO: Create a TS file to handle the types, share across files  -->
 <!-- ! Change JWT in production to env file -->
 <!-- TODO: verify semantic -->
+<!-- TODO: define terms and conditions -->
+<!-- ?? Using required on auth but not on messages-> need  to nake a choice for the 2 -->
+<!-- TODO: refactor message form as we have now auth -->
+<!-- TODO: Check path / to be enable on all devices -->
 
 ### Milestones
 * Create home page layout
@@ -57,11 +60,24 @@ For this project we will use Tailwindcss, Express, React and Typescript, Postgre
 * Implement authorization for delete route -> can now only delete own messages !
 * Implement anti-span for likes
 * Create auth (register) form
+* Handle login/register routes with context
+* Refactor auth form with components
+* Attaches the token in the header of the request
+* Refactor MsgForm
+* Create route for login/register with react-router
+* Error page
+* Display only delete icon for message matching userId with message's owner
 
+-> Login with tiers
+-> Pagination
+-> Refactor style with a component library
+-> Display already liked likes
+-> Remove likes
 -> Reply (UI)
--> Error page
-    
+-> Reply logic
+
 Authorization (who are you?) vs Authentication (what are you allowed to do?)
+Links for actual DOM element and navigate for logic
 
 ### Notes
 * Remove client readme

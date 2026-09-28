@@ -118,6 +118,9 @@ app.put("/api/messages/:id/like", authenticateToken, async (req: Request, res: R
             .limit(1);
         if(!targetMessage) return res.status(404).json({ error: "Message not found"});
 
+        // Check if user is not the owner of the message
+        if (targetMessage.ownerId === userId) return res.status(403).json({ error: "You cannot like your own message"});
+
         // Check with junction table if instance already exits
             // Anti-spam
         const messageLiked = await db.select().from(messageLikes)

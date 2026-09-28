@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useMessage } from "../context/MessageContext";
 import { MsgInput } from "../components/MsgInput";import toast from "react-hot-toast";
-;
 
 interface AsideProps {
     onOpenForm: () => void;

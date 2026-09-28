@@ -4,11 +4,12 @@ interface MessageProps {
     date: string;
     likeCount: number;
     isDeleteVisible: boolean;
+    isMessageLiked: boolean;
     onLikeClick: () => void;
     onDeleteClick: () => void;
 }
 
-export default function Message({ username, message, date, likeCount, isDeleteVisible, onLikeClick, onDeleteClick }: MessageProps) {
+export default function Message({ username, message, date, likeCount, isDeleteVisible, isMessageLiked, onLikeClick, onDeleteClick }: MessageProps) {
     return (
         <div className="grid gap-4 p-5 bg-white border-2 rounded-md border-light-grey">
             <div className="flex justify-between">
@@ -22,17 +23,22 @@ export default function Message({ username, message, date, likeCount, isDeleteVi
                 <div className="flex gap-4">
                     <div className="flex gap-2">
                         <button id="like-btn" type="button" onClick={onLikeClick} aria-labelledby="likeSpan">
-                            <img src="../src/assets/like.svg" alt="Like" width={20} height={20}/>
+                            {isMessageLiked ? (
+                                <img src="../src/assets/filled_like.svg" alt="Like" width={20} height={20}/>
+                            ):(
+                                <img src="../src/assets/like.svg" alt="Like" width={20} height={20}/>
+                            )}
                         </button>
                         <span id="likeSpan">{likeCount}</span>
                     </div>
 
-                    <div className="flex gap-2">
+                    {/* // TODO: reply */}
+                    {/* <div className="flex gap-2">
                         <button id="reply-btn" type="button" aria-labelledby="replySpan">
                             <img src="../src/assets/reply.svg" alt="" aria-hidden="true" width={20} height={20} />
                         </button>
                         <span id="replySpan">Reply</span>
-                    </div>
+                    </div> */}
                 </div>
 
                 {isDeleteVisible && (

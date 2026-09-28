@@ -140,6 +140,9 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
                 setMessages((prev) => 
                     prev.map((message) => message.id === id ? updatedMessage : message)
                 );
+
+                // Update the state to display after click
+                setLikedMessagesId((prev) => new Set(prev).add(id));
                 return "Successfully updated likes";
             },
             error: (err) => err.message

@@ -50,7 +50,7 @@ app.get("/api/messages", async (req: Request, res: Response) => {
     }
 })
 
-// POST new message (Protected route)
+// POST : create new message (Protected and Secure route)
     // Before the request reaches the route logic, middleware intercepts it and verifies the token
 app.post("/api/messages", authenticateToken, async (req: Request, res: Response) => {
     try {
@@ -99,7 +99,7 @@ app.post("/api/messages", authenticateToken, async (req: Request, res: Response)
     }
 })
 
-// PUT message (Protected route)
+// PUT route : like message (Protected route)
 app.put("/api/messages/:id/like", authenticateToken, async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
@@ -166,7 +166,51 @@ app.put("/api/messages/:id/like", authenticateToken, async (req: Request, res: R
     }
 })
 
-// GET route for likes
+// DELETE route : dislike message (Protected and Secure route)
+app.delete("/api/messages/:id/dislike", authenticateToken, async (req: Request, res: Response) => {
+    try {
+        const {id} = req.params;
+        if (!id) return res.status(400).json({ error: "ID not found"});
+
+        const messageId = parseInt(id);
+        const userId = req.user?.userId;
+        if (!userId) return res.status(401).json({ error: "Unauthorized"});
+
+        // Verify instance exists
+        // And security check: need to belong to the specified user
+        const [targetInstance] = await db.select().from(messageLikes)
+            .where(
+                and (
+                    eq(messageLikes.messageId, messageId),
+                    eq(messageLikes.userId, userId)
+                )
+            )
+            .limit(1);
+        if (!targetInstance) return res.status(404).json({ error: "Instance to be deleted not found"});
+
+        // Decrement like count
+         const [updatedMessage] = await db.update(messages)
+            .set({ likeCount: sql`${messages.likeCount} - 1` })
+            .where(eq(messages.id, messageId))
+            .returning();
+        if (!updatedMessage) return res.status(404).json({ error: "Updated message not found"});
+
+        await db.delete(messageLikes)
+            .where(
+                and (
+                    eq(messageLikes.messageId, messageId),
+                    eq(messageLikes.userId, userId)
+                )
+            )
+
+        res.status(200).json(updatedMessage);
+    } catch (error) {
+        console.error("Error trying to delete instance in messageLike table: ", error);
+        res.status(500).json({ error: "Failed to delete instance in messageLike table" });
+    }
+})
+
+// GET route : retrieve all Id of liked message (Protected)
 app.get("/api/messages/likes", authenticateToken, async (req: Request, res: Response) => {
     try {
         const userId = req.user?.userId;
@@ -187,7 +231,7 @@ app.get("/api/messages/likes", authenticateToken, async (req: Request, res: Resp
     }
 })
 
-// DELETE route (Protected and Secure route)
+// DELETE route : delete message (Protected and Secure route)
 app.delete("/api/messages/:id", authenticateToken, async (req: Request, res: Response) => {
     try {
         const {id} = req.params;

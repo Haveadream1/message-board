@@ -7,22 +7,23 @@ import { useAuth } from "../context/AuthContext";
 
 export default function Main() {
     const [isFormEnable, setIsFormEnable] = useState(false);
-    const { messages, updateLikeCount, deleteMessage, isLoaderEnable, likedMessagesId } = useMessage();
+    const { messages, isLoaderEnable, likedMessagesId, likeMessage, deleteMessage, dislikeMessage } = useMessage();
     const {user} = useAuth();
 
-    const displayDeleteIcon = (username: string) => {
-        if (user?.username === username) {
-            return true;
-        }
-        return false;
+    const checkMessageOwner = (username: string) => {
+        return user?.username === username ?  true : false;
     }
 
-    const displayUserLikedIcon = (likedMessagesId: Set<string>, messageId: string) => {
+    const checkLikedState = (likedMessagesId: Set<string>, messageId: string) => {
         // Check which messages was liked by user
-        if (likedMessagesId.has(messageId)) {
-            return true;
-        }
-        return false;
+        return likedMessagesId.has(messageId) ? true : false;
+    }
+
+    const handleOnLikeClick = (likedMessagesId: Set<string>, messageId: string) => {
+        const isMessageLiked = checkLikedState(likedMessagesId, messageId);
+
+        // Increment or decrease like count if already liked
+        return isMessageLiked ? dislikeMessage(messageId) : likeMessage(messageId);
     }
     
     return (
@@ -43,9 +44,9 @@ export default function Main() {
                             message={message.message}
                             date={message.createdAt.slice(0, 16).replace("T", " ")}
                             likeCount={message.likeCount}
-                            isDeleteVisible={displayDeleteIcon(message.username)}
-                            isMessageLiked={displayUserLikedIcon(likedMessagesId, message.id)}
-                            onLikeClick={() => updateLikeCount(message.id)}
+                            isDeleteVisible={checkMessageOwner(message.username)}
+                            isMessageLiked={checkLikedState(likedMessagesId, message.id)}
+                            onLikeClick={() => handleOnLikeClick(likedMessagesId, message.id)}
                             onDeleteClick={() => deleteMessage(message.id)}
                         />
                     ) 

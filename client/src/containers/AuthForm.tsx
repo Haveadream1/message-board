@@ -3,6 +3,7 @@ import { AuthButton } from "../components/AuthButton";
 import { AuthInput } from "../components/AuthInput";
 import { useAuth } from "../context/AuthContext";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function AuthForm () {
     const [isLogin, setIsLogin] = useState(false); // UX conv-> default on login as returning users is more common than new users
@@ -31,15 +32,15 @@ export default function AuthForm () {
     }
     
     return (    
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 p-8 rounded-md bg-white shadow-lg">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 p-8 max-w-5xl rounded-md bg-white shadow-lg">
             {/* Left column -> image and back button */}
             <div className="w-full h-full rounded-md relative overflow-hidden hidden md:block">
-                <button 
-                    type="button"
+                <Link
+                    to={"/"}
                     className="absolute top-4 left-4 rounded-full bg-white/50 backdrop-blur-sm px-4 py-1.5 text-sm font-medium hover:bg-white/80 transition"
-                    >
-                        ← Go back to website
-                </button>
+                >
+                    ← Go back to website
+                </Link>
                 <img 
                     src="https://placehold.co/350x350"
                     alt="Landscape" 

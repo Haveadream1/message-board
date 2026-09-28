@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { API_URL } from "../utils/config";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { API_URL } from "../utils/config";
 
 interface User {
     id: number;

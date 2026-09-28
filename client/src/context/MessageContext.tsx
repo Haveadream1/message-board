@@ -1,10 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { API_URL } from "../utils/config";
 import { useAuth } from "./AuthContext";
-
-// ? Might need to be a env variable after deploy
-// TODO: move into a config file 
-const API_URL = "http://localhost:3000/api";
 
 // Define types
 interface Message {

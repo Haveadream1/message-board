@@ -7,11 +7,19 @@ import { useAuth } from "../context/AuthContext";
 
 export default function Main() {
     const [isFormEnable, setIsFormEnable] = useState(false);
-    const { messages, updateLikeCount, deleteMessage, isLoaderEnable } = useMessage();
+    const { messages, updateLikeCount, deleteMessage, isLoaderEnable, likedMessagesId } = useMessage();
     const {user} = useAuth();
 
     const displayDeleteIcon = (username: string) => {
         if (user?.username === username) {
+            return true;
+        }
+        return false;
+    }
+
+    const displayUserLikedIcon = (likedMessagesId: Set<string>, messageId: string) => {
+        // Check which messages was liked by user
+        if (likedMessagesId.has(messageId)) {
             return true;
         }
         return false;
@@ -36,7 +44,7 @@ export default function Main() {
                             date={message.createdAt.slice(0, 16).replace("T", " ")}
                             likeCount={message.likeCount}
                             isDeleteVisible={displayDeleteIcon(message.username)}
-                            isMessageLiked={true} // Handle with a function later
+                            isMessageLiked={displayUserLikedIcon(likedMessagesId, message.id)}
                             onLikeClick={() => updateLikeCount(message.id)}
                             onDeleteClick={() => deleteMessage(message.id)}
                         />

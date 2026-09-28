@@ -9,6 +9,7 @@ import AuthForm from "./containers/AuthForm";
 /* Utils */
 import { Toaster } from "react-hot-toast";
 import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
+import { ErrorPage } from "./containers/ErrorPage";
 
 function RootLayout () {
     return (
@@ -26,6 +27,7 @@ const router = createBrowserRouter([
     {
         path: "/",
         element: <RootLayout />, // Providers wrap all children now
+        errorElement: <ErrorPage />,
         children: [
             { index: true, element: <HomePage /> },
             { path: "/auth/login", element: <AuthForm /> }

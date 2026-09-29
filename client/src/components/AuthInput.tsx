@@ -39,7 +39,10 @@ export function AuthInput ({id, label, name, value, autoComplete, isInputCheckbo
                         placeholder={label}
                         autoComplete={autoComplete}
                         disabled={disabled}
-                        className="bg-gray-100 p-3 rounded-md border border-transparent focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition"
+                        className="bg-gray-100 p-3 rounded-md border border-transparent
+                            focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2
+                            focus:ring-blue-500/20 transition
+                        "
                         required
                         onChange={onChange}
                     />

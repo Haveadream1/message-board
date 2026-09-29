@@ -108,11 +108,11 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
                 setMessages((prev) => [...prev, ...data.messages]);
                 setHasMore(data.hasMore);
                 setPage(nextPage);
-                setIsLoaderEnable(false);
+                setIsFetchingMore(false);
                 return "Successfully loaded more messages"
             },
             error: (err) => {
-                setIsLoaderEnable(false);
+                setIsFetchingMore(false);
                 return err.message;
             }
         });

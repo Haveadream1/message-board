@@ -34,7 +34,7 @@ app.get("/api/messages", async (req: Request, res: Response) => {
 
         // Order by the oldest to newest date
         const allMessages = await db.query.messages.findMany({
-            limit: limit,
+            limit: limit + 1,
             offset: offset,
             orderBy: [desc(messages.createdAt)], // New messages first
             with: {
@@ -42,16 +42,21 @@ app.get("/api/messages", async (req: Request, res: Response) => {
             }
         })
 
-        const formattedMessages = allMessages.map((msg) => ({
+        // Help to enable/disable the call function for this route
+            // We query always one more message than needed, 
+            // if the length of the total messages is superior then we know there is more to display !
+        const hasMore = allMessages.length > limit;
+
+        // Only send to frontend the message we display
+        const messagesToSend = allMessages.slice(0, limit);
+
+        const formattedMessages = messagesToSend.map((msg) => ({
             id: msg.id.toString(),
             username: msg?.owner.username || "Visitor",
             message: msg.message,
             createdAt: msg.createdAt.toISOString(),
             likeCount: msg.likeCount
         }))
-
-        // Help to enable/disable the call function for this route
-        const hasMore = formattedMessages.length === limit;
 
         res.json({
             messages: formattedMessages,

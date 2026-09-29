@@ -7,7 +7,10 @@ import { useAuth } from "../context/AuthContext";
 
 export default function Main() {
     const [isFormEnable, setIsFormEnable] = useState(false);
-    const { messages, isLoaderEnable, likedMessagesId, likeMessage, deleteMessage, dislikeMessage } = useMessage();
+    const { 
+        messages, isLoaderEnable, likedMessagesId, hasMore, isFetchingMore, 
+        loadMoreMessages, likeMessage, deleteMessage, dislikeMessage 
+    } = useMessage();
     const {user} = useAuth();
 
     const checkMessageOwner = (username: string) => {
@@ -58,8 +61,21 @@ export default function Main() {
                     </div>
                 )}
                 
-                {isFormEnable && (
+                {isFormEnable ? (
                     <MsgForm onOpenForm={() => setIsFormEnable(false)} />
+                ) : (
+                    hasMore && !isLoaderEnable && (
+                        <div className="flex justify-center">
+                            <button
+                                type="button"
+                                onClick={loadMoreMessages}
+                                disabled={isFetchingMore}
+                                className="bg-purple-500 text-white rounded-md p-3 font-medium hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-violet-400 focus:ring-offset-2 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                {isFetchingMore ? "Loading" : "Load more messages"}
+                            </button>
+                        </div>
+                    )
                 )}
             </div>
         </main>

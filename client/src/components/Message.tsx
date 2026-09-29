@@ -9,7 +9,10 @@ interface MessageProps {
     onDeleteClick: () => void;
 }
 
-export default function Message({ username, message, date, likeCount, isDeleteVisible, isMessageLiked, onLikeClick, onDeleteClick }: MessageProps) {
+export default function Message({ 
+    username, message, date, likeCount, isDeleteVisible, isMessageLiked, 
+    onLikeClick, onDeleteClick 
+}: MessageProps) {
     return (
         <div className="grid gap-4 p-5 bg-white border-2 rounded-md border-light-grey">
             <div className="flex justify-between">

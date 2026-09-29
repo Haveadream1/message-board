@@ -17,6 +17,10 @@ interface MessageContextType {
     messages: Message[];
     formData: string;
     likedMessagesId: Set<string>;
+    page: string;
+    hasMore: boolean;
+    isFetchingMore: boolean;
+    loadMoreMessages: () => Promise<void>;
     storeMessages: (messageText: string) => Promise<void>;
     likeMessage: (id: string) => Promise<void>;
     dislikeMessage: (id: string) => Promise<void>;
@@ -30,28 +34,38 @@ const MessageContext = createContext<MessageContextType | null>(null);
 export function MessageProvider({ children }: { children: React.ReactNode}) {
     const [isLoaderEnable, setIsLoaderEnable] = useState(true);
     const [messages, setMessages] = useState<Message[]>([]);
+
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(true);
+    const [isFetchingMore, setIsFetchingMore] = useState(false);
+
     const [formData, setFormData] = useState("");
     const [likedMessagesId, setLikedMessagesId] = useState<Set<string>>(new Set());
 
     // Get value and function from auth context
     const {token, logout} = useAuth();
 
+    // Constante
+    const MESSAGES_LIMIT = 3;
+
     // !Note: don't toast on mount -> only user interactions
     useEffect(() => {
-        const fetchMessages = async () => {
+        const fetchInitialMessages = async () => {
             try {
-                const response = await fetch(`${API_URL}/messages`);
+                const response = await fetch(`${API_URL}/messages?page=1&limit=${MESSAGES_LIMIT}`);
                 if (!response.ok) throw new Error("Failed to get messages");
 
                 const data = await response.json();
-                setMessages(data);
+                setMessages(data.messages);
+                setHasMore(data.hasMore);
+                setPage(1); // Init value
             } catch (error) {
                 console.error("Failed to fetch messages: ", error);
             } finally {
                 setIsLoaderEnable(false);
             }
         }
-        fetchMessages();
+        fetchInitialMessages();
     }, []);
 
     useEffect(() => {
@@ -73,6 +87,36 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
         }
         fetchLikedMessages();
     }, [token]);
+
+    const loadMoreMessages = async () => {
+        // Check if there is more messages in database
+        if (isFetchingMore || !hasMore) return;
+
+        setIsFetchingMore(true);
+        const nextPage = page + 1;
+
+        const loadMoreOperation = async () => {
+            const response = await fetch(`${API_URL}/messages?page=${nextPage}&limit=${MESSAGES_LIMIT}`);
+            if (!response.ok) throw new Error("Failed to load more messages");
+
+            return await response.json();
+        }
+
+        toast.promise(loadMoreOperation(), {
+            loading: "Loading more messages",
+            success: (data) => {
+                setMessages((prev) => [...prev, ...data.messages]);
+                setHasMore(data.hasMore);
+                setPage(nextPage);
+                setIsLoaderEnable(false);
+                return "Successfully loaded more messages"
+            },
+            error: (err) => {
+                setIsLoaderEnable(false);
+                return err.message;
+            }
+        });
+    }
 
     // Toast library handle the promise rejection, we can drop try/catch
     const storeMessages = async (messageText: string) => {
@@ -105,7 +149,8 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
         toast.promise(storeOperation(), {
             loading: "Storing message...",
             success: (savedMessage) => {
-                setMessages((prev) => [...prev, savedMessage]);
+                // Display new message first, following ordering from backend
+                setMessages((prev) => [savedMessage ,...prev]);
                 setFormData("");
                 return "Successfully stored message"
             },
@@ -229,6 +274,10 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
         messages,
         formData,
         likedMessagesId,
+        page,
+        hasMore,
+        isFetchingMore,
+        loadMoreMessages,
         storeMessages,
         likeMessage,
         dislikeMessage,

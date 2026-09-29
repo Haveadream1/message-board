@@ -35,7 +35,7 @@ export default function Message({
                         <span id="likeSpan">{likeCount}</span>
                     </div>
 
-                    {/* // TODO: reply */}
+                    {/* Prepared for reply */}
                     {/* <div className="flex gap-2">
                         <button id="reply-btn" type="button" aria-labelledby="replySpan">
                             <img src="../src/assets/reply.svg" alt="" aria-hidden="true" width={20} height={20} />

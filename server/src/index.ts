@@ -2,8 +2,8 @@ import express from "express";
 import type { Request, Response } from "express";
 import cors from "cors";
 import { db } from "./db/index.js";
-import { messages, users, messageLikes } from "./db/schema.js";
-import { and, asc, eq, sql } from "drizzle-orm";
+import { messages, messageLikes } from "./db/schema.js";
+import { and, desc, eq, sql } from "drizzle-orm";
 
 import { authenticateToken } from "./middleware/authentication.js";
 import authRouter from "./routes/authentication.js"
@@ -14,7 +14,7 @@ const PORT = process.env.PORT || 3000;
 // Middleware
 app.use(cors()); // Allows frontend to talk to backend
 app.use(express.json()); // Parse incoming JSON requests
-app.use("/api/auth", authRouter) // Mount authentication routes at specified path
+app.use("/api/auth", authRouter); // Mount authentication routes at specified path
 
 // Health route
 app.get("/health", (req: Request, res: Response) => {
@@ -24,12 +24,19 @@ app.get("/health", (req: Request, res: Response) => {
     })
 })
 
-// GET all messages
+// GET all messages (with pagination)
 app.get("/api/messages", async (req: Request, res: Response) => {
     try {
+        // Pagination params
+        const page = parseInt(req.query.page as string) || 1;
+        const limit = parseInt(req.query.limit as string) || 3;
+        const offset = (page - 1) * limit; // Nb of rows to skip
+
         // Order by the oldest to newest date
         const allMessages = await db.query.messages.findMany({
-            orderBy: [asc(messages.createdAt)],
+            limit: limit,
+            offset: offset,
+            orderBy: [desc(messages.createdAt)], // New messages first
             with: {
                 owner: { columns: {username: true} } // To fetch only username not passwordHash
             }
@@ -43,7 +50,13 @@ app.get("/api/messages", async (req: Request, res: Response) => {
             likeCount: msg.likeCount
         }))
 
-        res.json(formattedMessages);
+        // Help to enable/disable the call function for this route
+        const hasMore = formattedMessages.length === limit;
+
+        res.json({
+            messages: formattedMessages,
+            hasMore
+        });
     } catch (error) {
         console.error("Error trying to fetch messages: ", error);
         res.status(500).json({ error: "Failed to fetch messages" });

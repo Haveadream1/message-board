@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useMessage } from "../context/MessageContext";
 import { MsgInput } from "../components/MsgInput";import toast from "react-hot-toast";
+import { Button } from "../components/ui/Buttons";
 
 interface AsideProps {
     onOpenForm: () => void;
@@ -57,24 +58,30 @@ export default function MsgForm ({ onOpenForm }: AsideProps) {
                 />
 
                 <div className="flex justify-end gap-5">
-                    <button 
+                    <Button
                         type="submit" 
                         form="message-form"
-                        className="rounded-md text-white bg-blue-600 hover:bg-blue-700 font-medium px-7 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition disabled:cursor-not-allowed disabled:opacity-50" 
                         disabled={isSubmitting}
+                        color="blue"
+                        padding="wider"
+                        disabledStyle={true}
+                        focusStyle={true}
                     >
                         { isSubmitting ? "Posting..." : "Post message" }
-                    </button>
+                    </Button>
 
                     {!isSubmitting && (
-                        <button 
+                        <Button
                             type="button"
                             onClick={onCancel}
-                            className="rounded-md text-white bg-red-600 hover:bg-red-700 font-medium px-7 py-2 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition disabled:cursor-not-allowed disabled:opacity-50"
                             disabled={isSubmitting}
+                            color="red"
+                            padding="wider"
+                            disabledStyle={true}
+                            focusStyle={true}
                         >
                             Cancel
-                        </button>
+                        </Button>
                     )}
                 </div>
             </form>

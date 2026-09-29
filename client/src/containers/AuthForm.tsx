@@ -1,9 +1,9 @@
 import type React from "react";
-import { AuthButton } from "../components/AuthButton";
 import { AuthInput } from "../components/AuthInput";
 import { useAuth } from "../context/AuthContext";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { Button } from "../components/ui/Buttons";
 
 export default function AuthForm () {
     const [isLogin, setIsLogin] = useState(false); // UX conv-> default on login as returning users is more common than new users
@@ -43,7 +43,10 @@ export default function AuthForm () {
                 <Link
                     to={"/"}
                     onClick={cleanFormData}
-                    className="absolute top-4 left-4 rounded-full bg-white/50 backdrop-blur-sm px-4 py-1.5 text-sm font-medium hover:bg-white/80 transition"
+                    className="absolute top-4 left-4 rounded-full
+                        bg-white/50 backdrop-blur-sm px-4 py-1.5 
+                        text-sm font-medium hover:bg-white/80 transition
+                    "
                 >
                     ← Go back to website
                 </Link>
@@ -64,13 +67,14 @@ export default function AuthForm () {
                     <p className="text-gray-600">
                         {isLogin ? "Don't have an account?" : "Already have an account?"}
                     </p>
-                    <button 
+                    <Button
                         type="button"
                         onClick={handleFormSwitch}
-                        className="underline text-blue-600 hover:text-blue-800 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
+                        className="underline hover:text-blue-800"
+                        textColor="blue"
                     >
                         {isLogin ? "Register" : "Log in"}
-                    </button>
+                    </Button>
                 </div>
 
                 <form id="auth-form" onSubmit={handleSubmit} className="flex flex-col gap-4 mt-2">
@@ -101,21 +105,25 @@ export default function AuthForm () {
                         />
                     )}
 
-                    <button 
+                    <Button
                         type="submit"
                         form="auth-form"
                         disabled={isSubmitting}
-                        className="bg-blue-600 text-white rounded-md p-3 font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                        color="blue"
+                        padding="even"
+                        disabledStyle={true}
+                        focusStyle={true}
                     >
                         { isSubmitting ? (
                             "Submitting..."
                         ):(
                             isLogin ? "Log in" : "Create account"
                         )}
-                    </button>
+                    </Button>
                 </form>
 
-                <div className="relative my-2">
+                {/* Prepared for external-auth */}
+                {/* <div className="relative my-2">
                     <div className="absolute inset-0 flex items-center">
                         <div className="w-full border-t border-gray-200"></div>
                     </div>
@@ -127,47 +135,11 @@ export default function AuthForm () {
                 </div>
 
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                    {/* Can do a map with an array, but might add logo so img src later */}
                     <AuthButton 
                         name="Github"
                     />
-                    <AuthButton 
-                        name="Kakao"
-                    />
-                    <AuthButton 
-                        name="Line"
-                    />
-                    <AuthButton 
-                        name="Wechat"
-                    />
-                    <AuthButton 
-                        name="Google"
-                    />
-                </div>
+                </div> */}
             </section>
         </div>
     );
 }
-
-// TODO: define terms and conditions
-// ?? Keep required on inputs if we create validation or keep it like that
-
-// grid-cols-1 md:grid-cols-2
-    // Define one column and when space, takes two
-// px-4 py-1.5 
-    // padding-inline (left and right) padding-block (top and bottom)
-    // we can specify reading side
-// md: / sm:
-    // Media query for medium/small size screens
-// focus:ring-2
-    // Create shadowed outline
-// autocomplete: "new-password" for register; "current-password" for login
-// group
-    // Defined in the parent and then user group-hover on the child to apply the same style at the same moment
-// disabled:opacity-50 disabled:cursor-not-allowed
-    // target when submit button is disabled
-// inset
-    // set the distance between an el and the parent el
-
-// aria-label for button with redirection 
-// outline none on focus, and then display ring

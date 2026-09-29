@@ -4,6 +4,7 @@ import Message from "../components/Message";
 import { useMessage } from "../context/MessageContext";
 import MsgForm from "./MsgForm";
 import { useAuth } from "../context/AuthContext";
+import { Button } from "../components/ui/Buttons";
 
 export default function Main() {
     const [isFormEnable, setIsFormEnable] = useState(false);
@@ -58,7 +59,13 @@ export default function Main() {
                             
                 {isLoaderEnable && (
                     <div className="flex justify-center">
-                        <img src="../src/assets/loader.svg" alt="Loader" width={20} height={20} className="animate-spin"/>
+                        <img 
+                            src="../src/assets/loader.svg" 
+                            alt="Loader" 
+                            width={20} 
+                            height={20} 
+                            className="animate-spin"
+                        />
                     </div>
                 )}
                 
@@ -68,14 +75,17 @@ export default function Main() {
                     !isLoaderEnable &&
                     hasMore && (
                         <div className="flex justify-center">
-                            <button
+                            <Button
                                 type="button"
                                 onClick={loadMoreMessages}
                                 disabled={isFetchingMore}
-                                className="bg-purple-500 text-white rounded-md p-3 font-medium hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-violet-400 focus:ring-offset-2 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                                color="purple"
+                                padding="even"
+                                disabledStyle={true}
+                                focusStyle={true}
                             >
                                 {isFetchingMore ? "Loading" : "Load more messages"}
-                            </button>
+                            </Button>
                         </div>
                     )
                 )}

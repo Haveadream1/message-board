@@ -1,3 +1,5 @@
+import { Button } from "./ui/Buttons";
+
 interface AsideProps {
     onOpenForm: () => void;
     disabled: boolean;
@@ -13,14 +15,19 @@ export function Aside({ onOpenForm, disabled }: AsideProps) {
                 <br />
                 Try now !
             </p>
-            <button 
+
+            <Button
                 type="button" 
                 onClick={onOpenForm} 
-                className="w-full rounded-md text-white bg-blue-600 hover:bg-blue-700 font-medium p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition disabled::opacitiy-50 disabled:cursor-not-allowed"
                 disabled={disabled}
+                className="w-full"
+                color="blue"
+                padding="even"
+                disabledStyle={true}
+                focusStyle={true}
             >
-                Add message
-            </button>
+                Add Message
+            </Button>
         </aside>
     )
 }

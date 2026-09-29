@@ -7,6 +7,7 @@ import { useAuth } from "../context/AuthContext";
 
 export default function Main() {
     const [isFormEnable, setIsFormEnable] = useState(false);
+    
     const { 
         messages, isLoaderEnable, likedMessagesId, hasMore, isFetchingMore, 
         loadMoreMessages, likeMessage, deleteMessage, dislikeMessage 
@@ -52,7 +53,7 @@ export default function Main() {
                             onLikeClick={() => handleOnLikeClick(likedMessagesId, message.id)}
                             onDeleteClick={() => deleteMessage(message.id)}
                         />
-                    ) 
+                    )
                 )}
                             
                 {isLoaderEnable && (
@@ -64,7 +65,8 @@ export default function Main() {
                 {isFormEnable ? (
                     <MsgForm onOpenForm={() => setIsFormEnable(false)} />
                 ) : (
-                    hasMore && !isLoaderEnable && (
+                    !isLoaderEnable &&
+                    hasMore && (
                         <div className="flex justify-center">
                             <button
                                 type="button"

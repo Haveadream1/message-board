@@ -30,6 +30,11 @@ export default function AuthForm () {
             setIsSubmitting(false);
         }
     }
+
+    const handleFormSwitch = () => {
+        cleanFormData();
+        setIsLogin(!isLogin); // Toggle between state 
+    }
     
     return (    
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 p-8 max-w-5xl rounded-md bg-white shadow-lg">
@@ -37,6 +42,7 @@ export default function AuthForm () {
             <div className="w-full h-full rounded-md relative overflow-hidden hidden md:block">
                 <Link
                     to={"/"}
+                    onClick={cleanFormData}
                     className="absolute top-4 left-4 rounded-full bg-white/50 backdrop-blur-sm px-4 py-1.5 text-sm font-medium hover:bg-white/80 transition"
                 >
                     ← Go back to website
@@ -60,7 +66,7 @@ export default function AuthForm () {
                     </p>
                     <button 
                         type="button"
-                        onClick={() => setIsLogin(!isLogin)} // Toggle between state 
+                        onClick={handleFormSwitch}
                         className="underline text-blue-600 hover:text-blue-800 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
                     >
                         {isLogin ? "Register" : "Log in"}

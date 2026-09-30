@@ -198,7 +198,7 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
     const dislikeMessage = async (id: string) => {
         // No need for confirmation on dislike as it's not an irreversible operation
         const dislikeOperation = async () => {
-            const response = await fetch(`${API_URL}/messages/${id}/dislike`, {
+            const response = await fetch(`${API_URL}/messages/${id}/like`, {
                 method: "DELETE",
                 headers: {
                     "Content-type": "application/json",

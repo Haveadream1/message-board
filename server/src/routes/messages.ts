@@ -63,7 +63,7 @@ router.post("/", authenticateToken, async (req: Request, res: Response) => {
 
         // Backend validation (!never trust frontend)
         if (!message || !message.trim()) {
-            return res.status(400).json({ error: "Message are not valid" });
+            return res.status(400).json({ error: "Message not valid" });
         }
 
         // Insert new message into database
@@ -104,9 +104,9 @@ router.post("/", authenticateToken, async (req: Request, res: Response) => {
 router.put("/:id/like", authenticateToken, async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
-        if (!id) return res.status(400).json({ error: "ID not found" });
-
         const messageId = parseInt(id);
+        if (!id || isNaN(messageId)) return res.status(400).json({ error: "ID not found" });
+
         const userId = req.user?.userId;
         if (!userId) return res.status(401).json({ error: "Unauthorized"});
 
@@ -168,12 +168,12 @@ router.put("/:id/like", authenticateToken, async (req: Request, res: Response) =
 })
 
 // DELETE route : dislike message (Protected and Secure route)
-router.delete("/:id/dislike", authenticateToken, async (req: Request, res: Response) => {
+router.delete("/:id/like", authenticateToken, async (req: Request, res: Response) => {
     try {
         const {id} = req.params;
-        if (!id) return res.status(400).json({ error: "ID not found"});
-
         const messageId = parseInt(id);
+        if (!id || isNaN(messageId)) return res.status(400).json({ error: "ID not found"});
+
         const userId = req.user?.userId;
         if (!userId) return res.status(401).json({ error: "Unauthorized"});
 
@@ -236,9 +236,9 @@ router.get("/likes", authenticateToken, async (req: Request, res: Response) => {
 router.delete("/:id", authenticateToken, async (req: Request, res: Response) => {
     try {
         const {id} = req.params;
-        if (!id) return res.status(400).json({ error: "ID not found"});
-
         const messageId = parseInt(id);
+        if (!id || isNaN(messageId)) return res.status(400).json({ error: "ID not found"});
+
         const userId = req.user?.userId;
         if (!userId) return res.status(401).json({ error: "Unauthorized"})
         

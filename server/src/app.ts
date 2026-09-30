@@ -11,4 +11,4 @@ app.use(cors()); // Allows frontend to talk to backend
 app.use(express.json()); // Parse incoming JSON requests
 app.use("/api/auth", authRouter); // Mount authentication routes at specified path
 app.use("/api/messages", messageRouter);
-app.use("/api/health", healthRouter);
+app.use(healthRouter);

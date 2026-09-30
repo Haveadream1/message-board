@@ -5,7 +5,7 @@ export function AuthPage () {
     return (
         <>
             <Header 
-                isLoginDisplay={true}
+                isLoginDisplay={false}
             />
             <div className="flex-1 flex pt-5 justify-center">
                 <AuthForm />

@@ -6,7 +6,7 @@ export function HomePage () {
     return (
         <>
             <Header
-                isLoginDisplay={false}
+                isLoginDisplay={true}
             />
             <Main/>
         </>

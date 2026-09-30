@@ -27,7 +27,7 @@ export default function Message({
                     <div className="flex gap-2">
                         <button id="like-btn" type="button" onClick={onLikeClick} aria-labelledby="likeSpan">
                             {isMessageLiked ? (
-                                <img src="../src/assets/filled_like.svg" alt="Like" width={20} height={20}/>
+                                <img src="../src/assets/filled_like.svg" data-testid="filled-like" alt="Filled like" width={20} height={20}/>
                             ):(
                                 <img src="../src/assets/like.svg" alt="Like" width={20} height={20}/>
                             )}
@@ -40,13 +40,13 @@ export default function Message({
                         <button id="reply-btn" type="button" aria-labelledby="replySpan">
                             <img src="../src/assets/reply.svg" alt="" aria-hidden="true" width={20} height={20} />
                         </button>
-                        <span id="replySpan">Reply</span>
+                        <span id="reply-span">Reply</span>
                     </div> */}
                 </div>
 
                 {isDeleteVisible && (
                     <div className="flex gap-2">
-                        <button id="reply-btn" type="button" onClick={onDeleteClick}>
+                        <button id="delete-btn" data-testid="delete-btn" type="button" onClick={onDeleteClick}>
                             <img src="../src/assets/delete.svg" alt="Delete" width={20} height={20} />
                         </button>
                     </div>

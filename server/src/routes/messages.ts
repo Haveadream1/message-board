@@ -4,13 +4,11 @@ import { messages, messageLikes } from "../db/schema.js";
 import { and, desc, eq, sql } from "drizzle-orm";
 
 import { authenticateToken } from "../middleware/authentication.js";
-import authRouter from "./auth.js";
 
 const router = Router();
 
-
 // GET all messages (with pagination)
-router.get("/api/messages", async (req: Request, res: Response) => {
+router.get("/", async (req: Request, res: Response) => {
     try {
         // Pagination params
         const page = parseInt(req.query.page as string) || 1;
@@ -55,7 +53,7 @@ router.get("/api/messages", async (req: Request, res: Response) => {
 
 // POST : create new message (Protected and Secure route)
     // Before the request reaches the route logic, middleware intercepts it and verifies the token
-router.post("/api/messages", authenticateToken, async (req: Request, res: Response) => {
+router.post("/", authenticateToken, async (req: Request, res: Response) => {
     try {
         const { message } = req.body;
 
@@ -103,7 +101,7 @@ router.post("/api/messages", authenticateToken, async (req: Request, res: Respon
 })
 
 // PUT route : like message (Protected route)
-router.put("/api/messages/:id/like", authenticateToken, async (req: Request, res: Response) => {
+router.put("/:id/like", authenticateToken, async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
         if (!id) return res.status(400).json({ error: "ID not found" });
@@ -170,7 +168,7 @@ router.put("/api/messages/:id/like", authenticateToken, async (req: Request, res
 })
 
 // DELETE route : dislike message (Protected and Secure route)
-router.delete("/api/messages/:id/dislike", authenticateToken, async (req: Request, res: Response) => {
+router.delete("/:id/dislike", authenticateToken, async (req: Request, res: Response) => {
     try {
         const {id} = req.params;
         if (!id) return res.status(400).json({ error: "ID not found"});
@@ -214,7 +212,7 @@ router.delete("/api/messages/:id/dislike", authenticateToken, async (req: Reques
 })
 
 // GET route : retrieve all Id of liked message (Protected)
-router.get("/api/messages/likes", authenticateToken, async (req: Request, res: Response) => {
+router.get("/likes", authenticateToken, async (req: Request, res: Response) => {
     try {
         const userId = req.user?.userId;
         if (!userId) return res.status(401).json({ error: "Unauthorized"});
@@ -235,7 +233,7 @@ router.get("/api/messages/likes", authenticateToken, async (req: Request, res: R
 })
 
 // DELETE route : delete message (Protected and Secure route)
-router.delete("/api/messages/:id", authenticateToken, async (req: Request, res: Response) => {
+router.delete("/:id", authenticateToken, async (req: Request, res: Response) => {
     try {
         const {id} = req.params;
         if (!id) return res.status(400).json({ error: "ID not found"});

@@ -6,7 +6,7 @@ import { app } from "../app.js";
 describe("Health route", () => {
     it("return a 200 with an ok status", async () => {
         const res = await request(app)
-            .get("/api/health");
+            .get("/health");
         
         expect(res.status).toBe(200);
         expect(res.body.status).toBe("ok");

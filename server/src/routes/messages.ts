@@ -104,8 +104,10 @@ router.post("/", authenticateToken, async (req: Request, res: Response) => {
 router.put("/:id/like", authenticateToken, async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
+        if (typeof id !== "string") return res.status(400).json({ error: "Invalid ID"});
+
         const messageId = parseInt(id);
-        if (!id || isNaN(messageId)) return res.status(400).json({ error: "ID not found" });
+        if (isNaN(messageId)) return res.status(400).json({ error: "ID must be a number" });
 
         const userId = req.user?.userId;
         if (!userId) return res.status(401).json({ error: "Unauthorized"});
@@ -171,8 +173,10 @@ router.put("/:id/like", authenticateToken, async (req: Request, res: Response) =
 router.delete("/:id/like", authenticateToken, async (req: Request, res: Response) => {
     try {
         const {id} = req.params;
+        if (typeof id !== "string") return res.status(400).json({ error: "Invalid ID"});
+
         const messageId = parseInt(id);
-        if (!id || isNaN(messageId)) return res.status(400).json({ error: "ID not found"});
+        if (isNaN(messageId)) return res.status(400).json({ error: "ID must be a number" });
 
         const userId = req.user?.userId;
         if (!userId) return res.status(401).json({ error: "Unauthorized"});
@@ -235,9 +239,11 @@ router.get("/likes", authenticateToken, async (req: Request, res: Response) => {
 // DELETE route : delete message (Protected and Secure route)
 router.delete("/:id", authenticateToken, async (req: Request, res: Response) => {
     try {
-        const {id} = req.params;
+        const { id } = req.params;
+        if (typeof id !== "string") return res.status(400).json({ error: "Invalid ID"});
+
         const messageId = parseInt(id);
-        if (!id || isNaN(messageId)) return res.status(400).json({ error: "ID not found"});
+        if (isNaN(messageId)) return res.status(400).json({ error: "ID must be a number" });
 
         const userId = req.user?.userId;
         if (!userId) return res.status(401).json({ error: "Unauthorized"})

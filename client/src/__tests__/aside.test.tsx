@@ -20,7 +20,7 @@ describe("Aside component", () => {
     it("disable the button when disabled is true", () => {
         render(
             <Aside 
-                onOpenForm={() => vi.fn()}
+                onOpenForm={vi.fn()}
                 disabled={true}
             />
         )

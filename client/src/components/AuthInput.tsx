@@ -17,6 +17,7 @@ export function AuthInput ({id, label, name, value, autoComplete, isInputCheckbo
                     <input 
                         type="checkbox" 
                         id={id}
+                        data-testid={id}
                         name={name}
                         disabled={disabled}
                         className="w-4 h-4 border-gray-300 rounded focus:ring-blue-500 cursor-pointer"

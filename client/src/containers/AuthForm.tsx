@@ -106,6 +106,7 @@ export default function AuthForm () {
                     )}
 
                     <Button
+                        data-testid="auth-submit-btn"
                         type="submit"
                         form="auth-form"
                         disabled={isSubmitting}
@@ -121,24 +122,6 @@ export default function AuthForm () {
                         )}
                     </Button>
                 </form>
-
-                {/* Prepared for external-auth */}
-                {/* <div className="relative my-2">
-                    <div className="absolute inset-0 flex items-center">
-                        <div className="w-full border-t border-gray-200"></div>
-                    </div>
-                    <div className="relative flex justify-center text-sm">
-                        <span className="px-2 bg-white text-gray-500">
-                            {isLogin ? "Or log in with" : "Or register with" }
-                        </span>
-                    </div>
-                </div>
-
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                    <AuthButton 
-                        name="Github"
-                    />
-                </div> */}
             </section>
         </div>
     );

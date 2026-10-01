@@ -6,6 +6,7 @@ import { AuthProvider } from "./context/AuthContext";
 import { Homepage } from "./containers/HomePage";
 import { AuthPage } from "./containers/AuthPage";
 import { ErrorPage } from "./containers/ErrorPage";
+import { TermsPage } from "./containers/TermsPage";
 
 /* Utils */
 import { Toaster } from "react-hot-toast";
@@ -30,7 +31,8 @@ const router = createBrowserRouter([
         errorElement: <ErrorPage />,
         children: [
             { index: true, element: <Homepage /> },
-            { path: "/auth/login", element: <AuthPage /> }
+            { path: "/auth/login", element: <AuthPage /> },
+            { path: "/terms", element: <TermsPage />}
         ]
     },
 ])

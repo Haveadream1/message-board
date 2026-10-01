@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 interface InputProps {
     id: string;
     label?: string;
@@ -24,7 +26,14 @@ export function AuthInput ({id, label, name, value, autoComplete, isInputCheckbo
                         required
                     />
                     <span className="text-sm text-gray-600 group-hover:text-gray-800 transition">
-                        I agree to the <a href="/terms" className="underline text-blue-600 hover:text-blue-800">terms and conditions</a>
+                        {`I agree to the `} {/* To space it correctly */}
+                        <Link 
+                            to={"/terms"}
+                            aria-label="Continue to terms and conditions page"
+                            className="underline text-blue-600 hover:text-blue-800"
+                        >
+                            terms and conditions
+                        </Link>
                     </span>
                 </label>
             ): (

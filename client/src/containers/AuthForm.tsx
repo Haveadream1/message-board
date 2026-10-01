@@ -50,10 +50,12 @@ export default function AuthForm () {
                 >
                     ← Go back to website
                 </Link>
-                <img 
-                    src="https://placehold.co/350x350"
-                    alt="Landscape" 
+                <img
+                    src="../src/assets/blue_building.avif"
+                    alt="Building opening to the sky" 
                     className="h-full w-full object-cover"
+                    width={470}
+                    height={500}
                 />
             </div>
 

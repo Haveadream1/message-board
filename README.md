@@ -1,125 +1,140 @@
-# message-board
-(Badge + description)
+# Message Board 💬
 
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat&logo=typescript&logoColor=white)
+![React](https://img.shields.io/badge/React-black?logo=react)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=flat&logo=tailwind-css&logoColor=white)
+![Express](https://img.shields.io/badge/Express-000000?style=flat&logo=express&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=flat&logo=postgresql&logoColor=white)
+![Drizzle ORM](https://img.shields.io/badge/Drizzle_ORM-C5F74F?style=flat&logo=drizzle&logoColor=black)
+![Vitest](https://img.shields.io/badge/Tested_with-Vitest-6E9F18?style=flat&logo=vitest&logoColor=white)
+![Playwright](https://img.shields.io/badge/E2E-Playwright-2EAD33?style=flat&logo=playwright&logoColor=white)
+![GitHub Actions](https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-2088FF?style=flat&logo=github-actions&logoColor=white)
 
-## Project description
-We use EJS views, allow us to have HTML template in rendered in the server
+> Full-stack, message board website with pagination, JWT authentication and comprehensive testing coverage. Built to become a simple forum-style discussion platform.
 
-(GIF)
+## 📖 Project Description
 
-## Live Demo
+Inspired by classic forums, "Message Board" allows users to register, login, post messages, like/dislike posts and manage their own content with full ownership authorization. The website features a clean and responsive UI with accessibility considerations and robust backend security.
 
-## Features
+## 🌐 Live Demo
 
-## Technology stack and tools
-For this project we will use Tailwindcss, Express, React and Typescript, PostgreSQL via NEON, ORM (Prisma)
+🔗 [Message Board]()
 
-## Installation
+## ✨ Features
+
+### 🎯 Core Features
+- **Message Posting**: Create messages with real-time validation
+- **Like/Dislike System**: Anti-spam protection and prevents users from liking their own messages
+- **Pagination**: Improve database performance by fetching "page by page" messages instead of everything at once
+- **Responsive Design**: Mobile-first layout with Tailwind CSS
+
+### 🔐 Authentication & Authorization
+- **JWT-based Authentication**: Stateless, secure token system
+- **Password Hashing**: bcrypt for secure credential storage
+- **Owner Authorization**: Users can only delete their own messages
+- **Protected and Secured Routes**: Put in place an authentication middleware that check if the user is logged in and his id for targeted operation
+
+### 🎨 User Experience
+- **Loading States**: Skeleton loaders and spinners during async operations
+- **Toast Notifications**: Simple and non-intrusive notifications for all user actions
+- **Form Validation**: Real-time input validation on both client and server
+- **Confirmation Window**: Prevent accidental message deletion
+
+### 🧪 Testing Coverage
+- **Integration Tests**: Vitest + Supertest for all API endpoints
+- **Component Tests**: Vitest + React Testing Library for components
+- **E2E Tests**: Playwright for user flow registration
+
+## 🛠 Technology Stack
+
+### Frontend
+| Technology | Purpose |
+|------------|---------|
+| **React 18** | UI library with hooks and context |
+| **TypeScript** | Type-safe development |
+| **Vite** | Lightning-fast build tool |
+| **Tailwind CSS** | Utility-first styling |
+| **React Router** | Client-side routing |
+| **React Hot Toast** | Toast notifications |
+| **Lucide Icons** | Icon library |
+| **clsx** | Conditional className management |
+
+### Backend
+| Technology | Purpose |
+|------------|---------|
+| **Express.js** | REST API framework |
+| **TypeScript** | Type-safe server code |
+| **Drizzle ORM** | Type-safe SQL queries |
+| **PostgreSQL (Neon)** | Serverless database |
+| **JWT (jsonwebtoken)** | Stateless authentication |
+| **bcrypt** | Password hashing |
+| **cors** | Cross-origin resource sharing |
+
+### Testing
+| Technology | Purpose |
+|------------|---------|
+| **Vitest** | Test runner for both frontend/backend |
+| **Supertest** | HTTP assertions for API |
+| **@testing-library/react** | Component testing |
+| **Playwright** | End-to-end browser testing |
+| **jsdom** | Browser environment simulation |
+
+### DevOps & Tools
+- **GitHub Actions**: CI/CD pipeline
+- **Thunder Client**: API testing during development
+- **Vercel**: Frontend deployment
+- **Railway**: Backend deployment
+
+## 🚀 Installation
+
 ### Prerequisites
-### Installation guide
 
-## Testing guide
+- Node.js 18+ and npm
+- PostgreSQL database (Neon free tier recommended)
+- Git
 
-## Project structure
+### Client side guide
+1. Clone the repository: `git clone https://github.com/Haveadream1/message-board`
+2. Move to client directory `cd client`
+3. Install dependencies: `npm install`
+4. Copy the `.env.example` file in client to `.env`
+5. Follow the example and add your environment variables
+5. Start the client development: `npm run dev` 
+6. Run tests: 
+   - Unit Component tests: `npm run test`
+   - E2E tests: `npm run test:e2e`
+   or 
+   - Test both: `npm run test:all`
+7. Go back to root `cd ...`
 
-## API documentation
+### Server side guide
+1. Move to server directory `cd server`
+2. Install dependencies: `npm install`
+3. Copy the `.env.example` file in server to `.env` 
+4. Follow the example and add your environment variables
+5. Start the server development: `npm run dev` 
+6. Run test: 
+   - Integration tests: `npm run test`
 
-## To-dos
-* Like count update should have a loader animation
-    * Maybe the hear can do something
-    * Or optimistic UI ?
-* Add media-queries or box
+## 🔌 API Endpoints
 
-<!-- !: reset the database ID -->
-<!-- TODO: Create a TS file to handle the types, share across files  -->
-<!-- ! Change JWT in production to env file -->
-<!-- TODO: verify semantic -->
-<!-- TODO: define terms and conditions -->
-<!-- ?? Using required on auth but not on messages-> need  to nake a choice for the 2 -->
-<!-- TODO: refactor message form as we have now auth -->
-<!-- TODO: Check path / to be enable on all devices -->
+| Method | Route | Auth | Description |
+|--------|-------|------|-------------|
+| GET | `/health` | ❌ | Health check |
+| POST | `/auth/register` | ❌ | Create account |
+| POST | `/auth/login` | ❌ | Login into account |
+| GET | `/messages?offset=&limit=` | ❌ | Paginated messages |
+| POST | `/messages` | ✅ | Create message |
+| DELETE | `/messages/:id` | ✅ | Delete own message |
+| PUT | `/messages/:id/like` | ✅ | Increment like count |
+| DELETE | `/messages/:id/like` | ✅ | Decrement like count  and delete instance in junction table|
 
-### Milestones
-* Create home page layout
-* Style header
-* Create layout for message
-* Style the message component
-* Add responsiveness
-* Create a backend branch
-* Install backend dependencies
-* Create form component -> Input validation + handle submit
-* Create the GET/POST/Health routes
-* Handle the routes in the frontend to store/fetch data
-* Display error state
-* Connect to database PostgreSQL via NEON
-* Use Drizzle ORM, to introduce type-safe query
-* Create the PUT/DELETE route
-* Improve user experience with loading state, better alert with toast, confirmation on deletion
-* Implement authentification with JWS tokens and password hashing
-* Create authentication middleware -> stateless authentication (server doesn't keep the session in memory)
-* Implement authorization for delete route -> can now only delete own messages !
-* Implement anti-span for likes
-* Create auth (register) form
-* Handle login/register routes with context
-* Refactor auth form with components
-* Attaches the token in the header of the request
-* Refactor MsgForm
-* Create route for login/register with react-router
-* Error page
-* Display only delete icon for message matching userId with message's owner
+## 🚧 Future Enhancements
+* Implement thier-party authentication (Github, Line, Kakao, WeChat)
+* Develop reply/quote functionality
 
--> Login with tiers
--> Pagination
--> Refactor style with a component library
--> Display already liked likes
--> Remove likes
--> Reply (UI)
--> Reply logic
-
-Authorization (who are you?) vs Authentication (what are you allowed to do?)
-Links for actual DOM element and navigate for logic
-
-### Notes
-* Remove client readme
-* Like a forum, so a section and then discussions about it 
-* We only pass the user input into the backend, and create the message object inside the backend, as the frontend data can be manipulated !
-
-Should display message with an order, so we can modify it when we reply, the hierarchy will then be modifed
-
-/*
-Message-Dashboard
-* Like a stackOverflow thread
-* Button to add a new message and display of the thread's messages
-* Once clicked, form pop-up (Non-registered user username and message)
-* Basic form validation to check non-empty inputs, retrieve the values and store it to an array of obj [{username: , message: },..]
-* Display all the messages from the array (implement pagination or limitation later) 
-*/
-
-1. Create all the logic for simply send a message and fetch message from a particular section
-2. Allow answer to a particular message in a section
-3. Allow to create and discover section
-
-Start with name input and then move to profile with authentification ?
-Then we can have 2 options: Post like a guest or registered user
-
-Each messages:
-* Author / Date 
-* Reply option
-* Like option
-* If own message
-    * Edit / Delete 
-
-// JWT token contains all the session details (user info), without the need to store it in the server -> stateless
-// The authentification is then done by only checking the token signature with the secrete key
-// Tested with `Thunder client` by creating a POST request with path and body (username, password)
-// -The goal of the JWT in the login route is to give the frontend a cryptographically signed "Proof of Identity" that it can use for all future requests.
-
-## Credits
-react-hot-toast
-Lucid
-Drizzle ORM
-Tailwind CSS
-PostgreSQL with Neon
-bcrypt (hash passwords)
-jsonwebtoken JWT (generate secure token -> proves usre is logged)
-Thunder client (mock API request)
+## 🙌 Credits
+- **Icons:** [Tabler](https://tabler.io/icons) & [Lucide](https://lucide.dev/)
+- **Image:** [Héctor J. Rivas's image](https://unsplash.com/fr/photos/photo-en-contre-plongee-dun-batiment-de-mur-rideau-1FxMET2U5dU)
+- **Hosting:** [Render](https://render.com/) & [Neon](https://vercel.com/) 
+- **PostgreSQL serverless:** [Neon](https://neon.com/)

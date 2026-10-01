@@ -4,7 +4,7 @@ import { Aside } from "../components/Aside";
 
 // Component Unit test
 describe("Aside component", () => {
-    it("Display the aside correctly", () => {
+    it("display the aside correctly", () => {
         render(
             <Aside 
                 onOpenForm={vi.fn()}

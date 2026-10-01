@@ -33,7 +33,7 @@ export const messageLikes = pgTable("message_likes",
 )
 
 // Relations (1:1, 1:M, M:M)
-// Tells Drizzle how to JOIN tables automatiaclly
+    // Tells Drizzle how to JOIN tables automatically
 export const usersRelations = relations(users, ({ many }) => ({
     messages: many(messages),
     likedMessages: many(messageLikes)

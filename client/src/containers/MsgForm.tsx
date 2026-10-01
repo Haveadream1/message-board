@@ -44,6 +44,7 @@ export default function MsgForm ({ onOpenForm }: AsideProps) {
         <>
             <form 
                 id="message-form"
+                data-testid="message-form"
                 onSubmit={handleSubmit}
                 className="bg-white p-5 border-2 border-light-grey rounded-md flex flex-col gap-4"
             >

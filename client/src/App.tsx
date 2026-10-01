@@ -3,14 +3,13 @@ import { MessageProvider} from "./context/MessageContext";
 import { AuthProvider } from "./context/AuthContext";
 
 /* Pages */
-import { HomePage } from "./containers/HomePage";
+import { Homepage } from "./containers/HomePage";
 import { AuthPage } from "./containers/AuthPage";
 import { ErrorPage } from "./containers/ErrorPage";
 
 /* Utils */
 import { Toaster } from "react-hot-toast";
 import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
-
 
 function RootLayout () {
     return (
@@ -30,7 +29,7 @@ const router = createBrowserRouter([
         element: <RootLayout />, // Providers wrap all children now
         errorElement: <ErrorPage />,
         children: [
-            { index: true, element: <HomePage /> },
+            { index: true, element: <Homepage /> },
             { path: "/auth/login", element: <AuthPage /> }
         ]
     },

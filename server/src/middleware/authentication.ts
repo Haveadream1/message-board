@@ -25,7 +25,9 @@ export const authenticateToken = (req: Request, res: Response, next: NextFunctio
 
     // Extract token
     const token = header.split(" ")[1];
-    const JWT_KEY = process.env.JWT_KEY || "placeholder_key";
+    
+    const JWT_KEY = process.env.JWT_KEY;
+    if (!JWT_KEY) throw new Error("JWT_KEY is not defined as environment variable");
 
     try {
         // Verify token

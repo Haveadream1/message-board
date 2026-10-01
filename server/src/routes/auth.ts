@@ -7,8 +7,9 @@ import jwt from "jsonwebtoken";
 
 const router = Router();
 
-// Generate secret key for JWT
-const JWT_KEY = process.env.JWT_KEY || "placeholder_key"; // ! Change in production to env file
+// Fetch secret key for JWT
+const JWT_KEY = process.env.JWT_KEY;
+if (!JWT_KEY) throw new Error("JWT_KEY is not defined as environment variable");
 
 // Register route
 router.post("/register", async (req: Request, res: Response) => {

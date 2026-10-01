@@ -1,6 +1,11 @@
 import type { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 
+export interface UserPayLoad {
+    userId: number,
+    username: string
+}
+
 // Handle TS errors by extending the request for user on req.user
 declare global {
     namespace Express {
@@ -25,13 +30,14 @@ export const authenticateToken = (req: Request, res: Response, next: NextFunctio
 
     // Extract token
     const token = header.split(" ")[1];
-    
+    if(!token) return res.status(404).json({ error: "Access denined, no token provided"})
+
     const JWT_KEY = process.env.JWT_KEY;
     if (!JWT_KEY) throw new Error("JWT_KEY is not defined as environment variable");
 
     try {
         // Verify token
-        const decoded = jwt.verify(token, JWT_KEY) as { userId: number; username: string };
+        const decoded = jwt.verify(token, JWT_KEY) as UserPayLoad;
 
         // Attach decoded user info to request object
         req.user = decoded;

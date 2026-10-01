@@ -17,7 +17,7 @@ interface MessageContextType {
     messages: Message[];
     formData: string;
     likedMessagesId: Set<string>;
-    page: string;
+    page: number;
     hasMore: boolean;
     isFetchingMore: boolean;
     loadMoreMessages: () => Promise<void>;

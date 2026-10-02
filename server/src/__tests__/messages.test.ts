@@ -1,14 +1,20 @@
-import { describe, beforeAll, it, expect } from 'vitest';
+import { describe, beforeAll, it, expect, afterAll } from 'vitest';
 import request from "supertest";
 import {app} from "../app.js";
+import { db } from '../db/index.js';
+import { users } from '../db/schema.js';
+import { eq } from 'drizzle-orm';
 
 // Integration test
 describe("Messages Routes", () => {
-    const uniqueUsername = `Userq_${Date.now()}`;
-    const uniqueSecondUsername = `Userq1_${Date.now()}`;
+    const msgUser1 = `Msg_User_1${Date.now()}`;
+    const msgUser2 = `Msg_User_2${Date.now()}`;
+
+    let msgUser1Id: number;
+    let msgUser2Id: number;
 
     let authToken: string;
-    let secondUserAuthToken: string;
+    let authToken2: string;
 
     let messageId: number;
 
@@ -16,14 +22,16 @@ describe("Messages Routes", () => {
         // Mock a registered user
         const user1Res = await request(app)
             .post("/api/auth/register")
-            .send({ username: uniqueUsername, password: "1234523164"});
+            .send({ username: msgUser1, password: "1234523164"});
+        msgUser1Id = user1Res.body.user.id
         authToken = user1Res.body.token;
 
         // Mock a second registered user
         const user2Res = await request(app)
             .post("/api/auth/register")
-            .send({ username: uniqueSecondUsername, password: "1234523164!!!"});
-        secondUserAuthToken = user2Res.body.token;
+            .send({ username: msgUser2, password: "1234523164!!!"});
+        msgUser2Id = user2Res.body.user.id
+        authToken2 = user2Res.body.token;
     });
 
     describe("POST /api/messages", () => {
@@ -54,7 +62,7 @@ describe("Messages Routes", () => {
         it("return 403 when user try to delete message he doesn't own", async () => {
             const res = await request(app)
                 .delete(`/api/messages/${messageId}`)
-                .set("Authorization", `Bearer ${secondUserAuthToken}`);
+                .set("Authorization", `Bearer ${authToken2}`);
             
             expect(res.status).toBe(403);
             expect(res.body.error).toContain("Forbidden: User doesn't own the message");
@@ -68,5 +76,10 @@ describe("Messages Routes", () => {
             expect(res.status).toBe(200);
             expect(res.body.id).toBe(messageId.toString());
         })
+    })
+
+    afterAll(async () => {
+        if (msgUser1Id) await db.delete(users).where(eq(users.id, msgUser1Id));
+        if (msgUser2Id) await db.delete(users).where(eq(users.id, msgUser2Id));
     })
 })

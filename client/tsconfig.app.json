@@ -21,5 +21,6 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src", "e2e/tests", "e2e/auth.spec.ts", "e2e/homepage.spec.ts"]
+  "include": ["src"],
+  "exclude": ["node_modules", "dist", "src/__tests__", "e2e"]
 }

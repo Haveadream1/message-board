@@ -1,3 +1,7 @@
+import likeSvg from "../assets/like.svg";
+import filledLikeSvg from "../assets/filled_like.svg";
+import deleteSvg from "../assets/delete.svg";
+
 interface MessageProps {
     username: string;
     message: string;
@@ -27,9 +31,9 @@ export default function Message({
                     <div className="flex gap-2">
                         <button id="like-btn" type="button" onClick={onLikeClick} aria-labelledby="likeSpan">
                             {isMessageLiked ? (
-                                <img src="../src/assets/filled_like.svg" data-testid="filled-like" alt="Filled like" width={20} height={20}/>
+                                <img src={likeSvg} data-testid="filled-like" alt="Filled like" width={20} height={20}/>
                             ):(
-                                <img src="../src/assets/like.svg" alt="Like" width={20} height={20}/>
+                                <img src={filledLikeSvg} alt="Like" width={20} height={20}/>
                             )}
                         </button>
                         <span id="likeSpan">{likeCount}</span>
@@ -47,7 +51,7 @@ export default function Message({
                 {isDeleteVisible && (
                     <div className="flex gap-2">
                         <button id="delete-btn" data-testid="delete-btn" type="button" onClick={onDeleteClick}>
-                            <img src="../src/assets/delete.svg" alt="Delete" width={20} height={20} />
+                            <img src={deleteSvg} alt="Delete" width={20} height={20} />
                         </button>
                     </div>
                 )}

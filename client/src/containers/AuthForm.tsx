@@ -5,6 +5,8 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "../components/ui/Buttons";
 
+import blueBuildingAvif from "../assets/blue_building.avif";
+
 export default function AuthForm () {
     const [isLogin, setIsLogin] = useState(false); // UX conv-> default on login as returning users is more common than new users
     const [isSubmitting, setIsSubmitting] = useState(false); // To disable button onSubmit
@@ -51,7 +53,7 @@ export default function AuthForm () {
                     ← Go back to website
                 </Link>
                 <img
-                    src="../src/assets/blue_building.avif"
+                    src={blueBuildingAvif}
                     alt="Building opening to the sky" 
                     className="h-full w-full object-cover"
                     width={470}

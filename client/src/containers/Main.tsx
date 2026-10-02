@@ -1,10 +1,14 @@
 import { useState } from "react";
 import { Aside } from "../components/Aside";
 import Message from "../components/Message";
-import { useMessage } from "../context/MessageContext";
-import MsgForm from "./MsgForm";
-import { useAuth } from "../context/AuthContext";
 import { Button } from "../components/ui/Buttons";
+import MsgForm from "./MsgForm";
+
+import { useMessage } from "../context/MessageContext";
+import { useAuth } from "../context/AuthContext";
+
+import loader from "../assets/loader.svg";
+
 
 export default function Main() {
     const [isFormEnable, setIsFormEnable] = useState(false);
@@ -60,7 +64,7 @@ export default function Main() {
                 {isLoaderEnable && (
                     <div className="flex justify-center">
                         <img 
-                            src="../src/assets/loader.svg" 
+                            src={loader}
                             alt="Loader" 
                             width={20} 
                             height={20} 

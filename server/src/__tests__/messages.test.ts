@@ -4,8 +4,8 @@ import {app} from "../app.js";
 
 // Integration test
 describe("Messages Routes", () => {
-    const uniqueUsername = `User_${Date.now()}`;
-    const uniqueSecondUsername = `User1_${Date.now()}`;
+    const uniqueUsername = `Userq_${Date.now()}`;
+    const uniqueSecondUsername = `Userq1_${Date.now()}`;
 
     let authToken: string;
     let secondUserAuthToken: string;

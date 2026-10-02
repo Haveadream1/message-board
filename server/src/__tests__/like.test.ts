@@ -4,18 +4,20 @@ import {app} from "../app.js";
 
 // Integration tests
 describe("Likes Routes", () => {
-    const uniqueUsername = `User_${Date.now()}`;
+    const uniqueUsername = `Userw_${Date.now()}`;
+    const uniqueSecondUsername = `Userw1_${Date.now()}`;
+
+    let messageId: number;
     let authToken: string;
     let secondUserAuthToken: string;
 
-    let messageId: number;
     let likedMessageid: number;
 
     beforeAll(async () => {
         // Mock registration
         const registrationRes = await request(app)
             .post("/api/auth/register")
-            .send({ username: uniqueUsername, password: "1234564"});
+            .send({ username: uniqueUsername, password: "123456jojo4"});
         authToken = registrationRes.body.token;
 
         // Mock message
@@ -24,18 +26,16 @@ describe("Likes Routes", () => {
             .set("Authorization", `Bearer ${authToken}`)
             .send({ message: "Hi !"});
         messageId = parseInt(MessageRes.body.id);
-    });
-
-    describe("PUT /api/messsages/:id/like", () => {
-        const uniqueUsername = `User_${Date.now()}`
 
         // Mock a second registered user
-        beforeAll(async () => {
-            const res = await request(app)
-                .post("/api/auth/register")
-                .send({ username: uniqueUsername, password: "1234523164"});
-            secondUserAuthToken = res.body.token;
-        });
+        const user2Res = await request(app)
+            .post("/api/auth/register")
+            .send({ username: uniqueSecondUsername, password: "3411234523164!!!"});
+        secondUserAuthToken = user2Res.body.token;
+    });
+
+    describe("PUT /api/messages/:id/like", () => {
+        const secondUniqueUsername = `User_${Date.now()}`
 
         it("return 403 if user try to like his own message", async () => {
             const res = await request(app)
@@ -71,7 +71,7 @@ describe("Likes Routes", () => {
     describe("DELETE /api/messages/:id/like", () => {
         it("return 200 for disliked message", async () => {
             const res = await request(app)
-                .delete(`/api/messages/${likedMessageid}/like`)
+                .delete(`/api/messages/${messageId}/like`)
                 .set("Authorization", `Bearer ${secondUserAuthToken}`);
             
             expect(res.status).toBe(200);

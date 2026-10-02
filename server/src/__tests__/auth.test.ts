@@ -7,11 +7,11 @@ describe("Auth route", () => {
 
     it("return 201 and username on registration", async () => {
         // Need to create an unique username for every test otherwise auth will remember and throw err
-        const uniqueUsername = `User_${Date.now()}`;
+        const uniqueUsername = `Usery_${Date.now()}`;
 
         const res = await request(app)
             .post("/api/auth/register")
-            .send({ username: uniqueUsername, password: "123wqeqweqwe"});
+            .send({ username: uniqueUsername, password: "zq12345678"});
         
         expect(res.status).toBe(201);
         expect(res.body.user.username).toBe(uniqueUsername);
@@ -19,7 +19,7 @@ describe("Auth route", () => {
     });
 
     it("return 200 and username on login", async () => {
-        const uniqueUsername = `User_${Date.now()}`;
+        const uniqueUsername = `Userj_${Date.now()}`;
 
         // Register the user
         await request(app)
@@ -37,18 +37,21 @@ describe("Auth route", () => {
     });
 
     it("return 401 on wrong password for login", async () => {
-        const uniqueUsername = `User_${Date.now()}`;
+        const uniqueUsername = `Userl_${Date.now()}`;
 
         // Register the user
         await request(app)
             .post("/api/auth/register")
-            .send({ username: uniqueUsername, password: "1234523164"});
+            .send({ username: uniqueUsername, password: "1234523164jjjjj"});
 
+        // Login
         const res = await request(app)
             .post("/api/auth/login")
-            .send({ username: uniqueUsername, password: "1234523164!!!"});
+            .send({ username: uniqueUsername, password: "12llloo34523164!!!"});
         
         expect(res.status).toBe(401);
         expect(res.body.error).toContain("Invalid password");
     })
 })
+
+// * Can execute really fast and then so have same username accros tests, differentiate by giving diff prefix

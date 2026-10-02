@@ -54,7 +54,7 @@ export function AuthProvider({ children }: { children: React.ReactNode}) {
 
     const login = async (username: string, password: string) => {
         const loginOperation = async () => {
-            const response = await fetch(`${API_URL}/auth/login`, {
+            const response = await fetch(`${API_URL}/api/auth/login`, {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify({ username, password})
@@ -79,7 +79,7 @@ export function AuthProvider({ children }: { children: React.ReactNode}) {
 
     const register = async (username: string, password: string) => {
         const registerOperation = async () => {
-            const response = await fetch(`${API_URL}/auth/register`, {
+            const response = await fetch(`${API_URL}/api/auth/register`, {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify({username, password})

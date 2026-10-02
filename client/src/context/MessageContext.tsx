@@ -53,7 +53,7 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
     useEffect(() => {
         const fetchInitialMessages = async () => {
             try {
-                const response = await fetch(`${API_URL}/messages?page=1&limit=${MESSAGES_LIMIT}`);
+                const response = await fetch(`${API_URL}/api/messages?page=1&limit=${MESSAGES_LIMIT}`);
                 if (!response.ok) throw new Error("Failed to get messages");
 
                 const data = await response.json();
@@ -74,7 +74,7 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
             if (!token) return; // Only fetch if user is logged in
 
             try {
-                const response = await fetch(`${API_URL}/messages/likes`, {
+                const response = await fetch(`${API_URL}/api/messages/likes`, {
                     headers: { "Authorization": `Bearer ${token}`}
                 });
                 if (!response.ok) throw new Error("Failed to get liked messages");
@@ -97,7 +97,7 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
         const nextPage = page + 1;
 
         const loadMoreOperation = async () => {
-            const response = await fetch(`${API_URL}/messages?page=${nextPage}&limit=${MESSAGES_LIMIT}`);
+            const response = await fetch(`${API_URL}/api/messages?page=${nextPage}&limit=${MESSAGES_LIMIT}`);
             if (!response.ok) throw new Error("Failed to load more messages");
 
             return await response.json();
@@ -128,7 +128,7 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
         }
 
         const storeOperation = async () => {
-            const response = await fetch(`${API_URL}/messages`, {
+            const response = await fetch(`${API_URL}/api/messages`, {
                 method: "POST",
                 headers: {
                     "Content-type": "application/json",
@@ -162,7 +162,7 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
     const likeMessage = async (id: string) => {
         const likeOperation = async () => {
             // Backend handle the incrementation
-            const response = await fetch(`${API_URL}/messages/${id}/like`, {
+            const response = await fetch(`${API_URL}/api/messages/${id}/like`, {
                 method: "PUT",
                 headers: {
                     "Content-type": "application/json",
@@ -199,7 +199,7 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
     const dislikeMessage = async (id: string) => {
         // No need for confirmation on dislike as it's not an irreversible operation
         const dislikeOperation = async () => {
-            const response = await fetch(`${API_URL}/messages/${id}/like`, {
+            const response = await fetch(`${API_URL}/api/messages/${id}/like`, {
                 method: "DELETE",
                 headers: {
                     "Content-type": "application/json",
@@ -239,7 +239,7 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
         }
 
         const deleteOperation = async () => {
-            const response = await fetch(`${API_URL}/messages/${id}`, {
+            const response = await fetch(`${API_URL}/api/messages/${id}`, {
                 method: "DELETE",
                 headers: {
                     "Content-type": "application/json",

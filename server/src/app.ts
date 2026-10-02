@@ -10,7 +10,7 @@ export const app = express();
 app.use(cors({
     origin: [
         "http://localhost:5173",
-        "https://message-board-71n7.vercel.app/"
+        "https://message-board-71n7.vercel.app"
     ],
     credentials: true
 })); // Allows frontend to talk to backend

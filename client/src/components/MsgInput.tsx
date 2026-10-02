@@ -8,7 +8,7 @@ interface InputProps {
     value: string;
     placeholder?: string;
     disabled: boolean;
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
 }
 
 export function MsgInput({ id, label, isInputEmpty, errorText, value, placeholder, disabled, onChange }: InputProps) {

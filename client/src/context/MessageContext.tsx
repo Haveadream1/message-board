@@ -6,6 +6,7 @@ import { useAuth } from "./AuthContext";
 // Define types
 interface Message {
     id: string;
+    username: string;
     message: string;
     createdAt: string;
     likeCount: number;

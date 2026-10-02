@@ -1,13 +1,14 @@
 import { test, expect } from "@playwright/test";
+import { E2E_BASE_URL } from "../utils/config";
 
 test("has title", async ({ page }) => {
-	await page.goto("http://localhost:5173/");
+	await page.goto(`${E2E_BASE_URL}/`);
 
 	await expect(page).toHaveTitle(/Message board/);
 })
 
 test("display message form on add message button", async ({ page }) => {
-  	await page.goto("http://localhost:5173/");
+  	await page.goto(`${E2E_BASE_URL}/`);
 
 	await page.getByRole("button", { name: /Add Message/i }).click();
 

@@ -1,4 +1,5 @@
-import { test, expect } from "@playwright/test"
+import { test, expect } from "@playwright/test";
+import { E2E_BASE_URL } from "../utils/config";
 
 test.describe("Authentication Process", () => {
     // Unique username like backend tests
@@ -7,7 +8,7 @@ test.describe("Authentication Process", () => {
     
     test("should register successfully and redirect to homepage", async ({ page }) => {
         // Go to register page
-        await page.goto("http://localhost:5173/auth/login");
+        await page.goto(`${E2E_BASE_URL}/auth/login`);
         
         // Fill the form inputs
         await page.getByPlaceholder(/Username/).fill(uniqueUsername);
@@ -20,7 +21,7 @@ test.describe("Authentication Process", () => {
         await page.getByTestId(/auth-submit-btn/).click()
 
         // Validate by checking the homepage url
-        await expect(page).toHaveURL("http://localhost:5173/");
+        await expect(page).toHaveURL(`${E2E_BASE_URL}/`);
     })
 })
 

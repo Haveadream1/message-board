@@ -31,9 +31,9 @@ export default function Message({
                     <div className="flex gap-2">
                         <button id="like-btn" type="button" onClick={onLikeClick} aria-labelledby="likeSpan">
                             {isMessageLiked ? (
-                                <img src={likeSvg} data-testid="filled-like" alt="Filled like" width={20} height={20}/>
+                                <img src={filledLikeSvg} data-testid="filled-like" alt="Filled like" width={20} height={20}/>
                             ):(
-                                <img src={filledLikeSvg} alt="Like" width={20} height={20}/>
+                                <img src={likeSvg} alt="Like" width={20} height={20}/>
                             )}
                         </button>
                         <span id="likeSpan">{likeCount}</span>

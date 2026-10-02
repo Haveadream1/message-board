@@ -68,7 +68,7 @@ describe("Likes Routes", () => {
         })
     })
 
-    describe("DELETE /api/messages/:id/like", async () => {
+    describe("DELETE /api/messages/:id/like", () => {
         it("return 200 for disliked message", async () => {
             const res = await request(app)
                 .delete(`/api/messages/${likedMessageid}/like`)

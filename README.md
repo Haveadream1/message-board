@@ -136,5 +136,6 @@ Inspired by classic forums, "Message Board" allows users to register, login, pos
 ## 🙌 Credits
 - **Icons:** [Tabler](https://tabler.io/icons) & [Lucide](https://lucide.dev/)
 - **Image:** [Héctor J. Rivas's image](https://unsplash.com/fr/photos/photo-en-contre-plongee-dun-batiment-de-mur-rideau-1FxMET2U5dU)
-- **Hosting:** [Render](https://render.com/) & [Neon](https://vercel.com/) 
+- **Hosting:** [Render](https://render.com/) & [Vercel](https://vercel.com/) 
 - **PostgreSQL serverless:** [Neon](https://neon.com/)
+- **Accessibility checker:** [WebYes](https://www.webyes.com/)

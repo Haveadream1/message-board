@@ -8,5 +8,9 @@ export default defineConfig({
     globals: true,
     setupFiles: ['./src/__tests__/setup.ts'], 
     exclude: ['**/node_modules/**', '**/dist/**', '**/e2e/**', '**/*.spec.ts'],
+    env: {
+      VITE_API_URL: 'http://localhost:3000/api',
+      E2E_BASE_URL: 'http://localhost:5173'
+    }
   },
 });

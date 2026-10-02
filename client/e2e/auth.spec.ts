@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { E2E_BASE_URL } from "../utils/config";
+import { E2E_BASE_URL } from "../src/utils/config";
 
 test.describe("Authentication Process", () => {
     // Unique username like backend tests

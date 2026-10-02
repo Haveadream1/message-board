@@ -16,13 +16,13 @@ describe("Messages Routes", () => {
         // Mock a registered user
         const user1Res = await request(app)
             .post("/api/auth/register")
-            .send({ username: uniqueUsername, password: "1234564"});
+            .send({ username: uniqueUsername, password: "1234523164"});
         authToken = user1Res.body.token;
 
         // Mock a second registered user
         const user2Res = await request(app)
             .post("/api/auth/register")
-            .send({ username: uniqueSecondUsername, password: "1234"});
+            .send({ username: uniqueSecondUsername, password: "1234523164!!!"});
         secondUserAuthToken = user2Res.body.token;
     });
 

@@ -11,7 +11,7 @@ describe("Auth route", () => {
 
         const res = await request(app)
             .post("/api/auth/register")
-            .send({ username: uniqueUsername, password: "123qwe"});
+            .send({ username: uniqueUsername, password: "123wqeqweqwe"});
         
         expect(res.status).toBe(201);
         expect(res.body.user.username).toBe(uniqueUsername);
@@ -24,12 +24,12 @@ describe("Auth route", () => {
         // Register the user
         await request(app)
             .post("/api/auth/register")
-            .send({ username: uniqueUsername, password: "poqe1"});
+            .send({ username: uniqueUsername, password: "poq123123e1"});
         
         // Test the login
         const res = await request(app)
             .post("/api/auth/login")
-            .send({ username: uniqueUsername, password: "poqe1" });
+            .send({ username: uniqueUsername, password: "poq123123e1" });
         
         expect(res.status).toBe(200);
         expect(res.body.user.username).toBe(uniqueUsername);
@@ -42,11 +42,11 @@ describe("Auth route", () => {
         // Register the user
         await request(app)
             .post("/api/auth/register")
-            .send({ username: uniqueUsername, password: "poqe1"});
+            .send({ username: uniqueUsername, password: "1234523164"});
 
         const res = await request(app)
             .post("/api/auth/login")
-            .send({ username: uniqueUsername, password: "123oops!"});
+            .send({ username: uniqueUsername, password: "1234523164!!!"});
         
         expect(res.status).toBe(401);
         expect(res.body.error).toContain("Invalid password");

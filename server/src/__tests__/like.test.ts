@@ -33,7 +33,7 @@ describe("Likes Routes", () => {
         beforeAll(async () => {
             const res = await request(app)
                 .post("/api/auth/register")
-                .send({ username: uniqueUsername, password: "1234"});
+                .send({ username: uniqueUsername, password: "1234523164"});
             secondUserAuthToken = res.body.token;
         });
 

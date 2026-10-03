@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { API_URL } from "../utils/config";
 
 interface User {
-    id: number;
+    id: string;
     username: string;
 }
 
@@ -59,7 +59,11 @@ export function AuthProvider({ children }: { children: React.ReactNode}) {
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify({ username, password})
             });
-            if (!response.ok) throw new Error("Login failed");
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || "Failed to login");
+            }
             return await response.json();
         }
 
@@ -71,7 +75,7 @@ export function AuthProvider({ children }: { children: React.ReactNode}) {
                 localStorage.setItem("authUser", JSON.stringify(data.user));
                 localStorage.setItem("authToken", data.token);
                 navigate("/");
-                return `Welcome back, ${data.user.username}`
+                return `Welcome back, ${data.user.username}`;
             },
             error: (err) => err.message
         })
@@ -84,7 +88,11 @@ export function AuthProvider({ children }: { children: React.ReactNode}) {
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify({username, password})
             })
-            if (!response.ok) throw new Error("Register failed");
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || "Failed to register");
+            }
             return await response.json();
         } 
 
@@ -96,7 +104,7 @@ export function AuthProvider({ children }: { children: React.ReactNode}) {
                 localStorage.setItem("authUser", JSON.stringify(data.user));
                 localStorage.setItem("authToken", data.token);
                 navigate("/");
-                return `Account created! Welcome ${data.user.username}`
+                return `Account created! Welcome ${data.user.username}`;
             },
             error: (err) => err.message
         })
@@ -106,6 +114,7 @@ export function AuthProvider({ children }: { children: React.ReactNode}) {
     const logout = () => {
         setUser(null);
         setToken(null);
+
         localStorage.removeItem("authUser");
         localStorage.removeItem("authToken");
         
@@ -152,4 +161,4 @@ export const useAuth = () => {
     if (!context) throw new Error("useAuth must be in a AuthProvider");
     
     return context;
-}   
+} 

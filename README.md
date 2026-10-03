@@ -4,7 +4,9 @@
 ![React](https://img.shields.io/badge/React-black?logo=react)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=flat&logo=tailwind-css&logoColor=white)
 ![Express](https://img.shields.io/badge/Express-000000?style=flat&logo=express&logoColor=white)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=flat&logo=postgresql&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=flat&logo=postgresql&logoColor=white)    
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat&logo=nodedotjs&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-646CFF?style=flat&logo=vite&logoColor=white)
 ![Drizzle ORM](https://img.shields.io/badge/Drizzle_ORM-C5F74F?style=flat&logo=drizzle&logoColor=black)
 ![Vitest](https://img.shields.io/badge/Tested_with-Vitest-6E9F18?style=flat&logo=vitest&logoColor=white)
 ![Playwright](https://img.shields.io/badge/E2E-Playwright-2EAD33?style=flat&logo=playwright&logoColor=white)
@@ -14,11 +16,23 @@
 
 ## 📖 Project Description
 
-Inspired by classic forums, "Message Board" allows users to register, login, post messages, like/dislike posts and manage their own content with full ownership authorization. The website features a clean and responsive UI with accessibility considerations and robust backend security.
+Inspired by classic forums, **"Message Board"** allows users to register, login, post messages, like/dislike posts and manage their own content with full ownership authorization. The website features a clean and responsive UI with accessibility considerations and robust backend security.
 
 ## 🌐 Live Demo
 
 🔗 [Message Board](https://message-board-71n7.vercel.app/)
+
+| Homepage | Authentication page |
+| :---: | :---: |
+| <img width="556" height="300" alt="Homepage" src="https://github.com/user-attachments/assets/e0811de3-14d4-4c2b-8beb-11cf54a0ef72" /> | <img width="560" height="300" alt=" Authentication page" src="https://github.com/user-attachments/assets/913e959c-8c1c-4dfa-90ad-129873b96edc" /> |
+
+## 📊 Performance and accessibility
+Lighthouse and WebYes audits are performed after each major update ensuring performance and accessibility (a11y) standards.
+> This website marked full score on Lighthouse and fulfilled all accessibility requirements for the WCAG 2.2 AA on WebYes
+
+| Lighthouse | WebYes |
+| :---: | :---: |
+| <img width="360" height="135" alt="Lighthouse results" src="https://github.com/user-attachments/assets/d2504668-95c6-49c6-9bd5-55adb30c81d0" /> | <img width="360" height="146" alt="WebYes results" src="https://github.com/user-attachments/assets/028133e4-0a09-4c14-994d-cf1ec782c39e" /> |
 
 ## ✨ Features
 
@@ -138,4 +152,4 @@ Inspired by classic forums, "Message Board" allows users to register, login, pos
 - **Image:** [Héctor J. Rivas's image](https://unsplash.com/fr/photos/photo-en-contre-plongee-dun-batiment-de-mur-rideau-1FxMET2U5dU)
 - **Hosting:** [Render](https://render.com/) & [Vercel](https://vercel.com/) 
 - **PostgreSQL serverless:** [Neon](https://neon.com/)
-- **Accessibility checker:** [WebYes](https://www.webyes.com/)
+- **Accessibility checker:** [WebYes](https://www.webyes.com/) & [Lighthouse](https://chromewebstore.google.com/detail/lighthouse/blipmdconlkpinefehnmjammfjpmpbjk?hl=fr&pli=1)

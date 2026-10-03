@@ -30,18 +30,20 @@ router.get("/", async (req: Request, res: Response) => {
             // if the length of the total messages is superior then we know there is more to display !
         const hasMore = allMessages.length > limit;
 
-        // Only send to frontend the message we display
+        // Only send to frontend the message within defined limit
         const messagesToSend = allMessages.slice(0, limit);
 
         const formattedMessages = messagesToSend.map((msg) => ({
             id: msg.id.toString(),
             username: msg?.owner.username || "Visitor",
+            ownerId: msg.ownerId.toString(),
             message: msg.message,
             createdAt: msg.createdAt.toISOString(),
             likeCount: msg.likeCount
-        }))
+        }));
+        console.log("Paginated messages fetched!");
 
-        res.json({
+        res.status(200).json({
             messages: formattedMessages,
             hasMore
         });
@@ -82,18 +84,18 @@ router.post("/", authenticateToken, async (req: Request, res: Response) => {
             }
         })
 
-        const formattedMessages = {
+        const formattedMessage = {
             id: insertedMessage.id.toString(),
             username: fullMessage?.owner.username || "Visitor",
+            ownerId: fullMessage?.ownerId.toString(),
             message: insertedMessage.message,
             createdAt: insertedMessage.createdAt.toISOString(),
             likeCount: insertedMessage.likeCount
         };
-
-        console.log("New message was successfully inserted !", formattedMessages);
+        console.log("New message was successfully inserted !", formattedMessage);
             
         // Return success status with created message
-        res.status(201).json(formattedMessages);
+        res.status(201).json(formattedMessage);
     } catch (error) {
         console.error("Error trying to post message: ", error);
         res.status(500).json({ error: "Failed to post message" });
@@ -146,7 +148,7 @@ router.put("/:id/like", authenticateToken, async (req: Request, res: Response) =
             .returning();
         if(!updatedMessage) return res.status(404).json({ error: "Failed to find updated message"});
 
-        // Fetch the full message with the usernme for the frontend
+        // Fetch the full message with the username for the frontend
         const fullMessage = await db.query.messages.findFirst({
             where: eq(messages.id, updatedMessage.id),
             with: {
@@ -154,15 +156,17 @@ router.put("/:id/like", authenticateToken, async (req: Request, res: Response) =
             }
         })
 
-        const formattedMessages = {
+        const formattedMessage = {
             id: updatedMessage.id.toString(),
             username: fullMessage?.owner.username || "Visitor",
+            ownerId: fullMessage?.ownerId.toString(),
             message: updatedMessage.message,
             createdAt: updatedMessage.createdAt.toISOString(),
             likeCount: updatedMessage.likeCount
         };
+        console.log("Successfully liked message!");
 
-        res.status(200).json(formattedMessages);
+        res.status(200).json(formattedMessage);
     } catch (error) {
         console.error("Error trying to update message: ", error);
         res.status(500).json({ error: "Failed to put message" });
@@ -207,8 +211,26 @@ router.delete("/:id/like", authenticateToken, async (req: Request, res: Response
                     eq(messageLikes.userId, userId)
                 )
             )
+        
+         // Fetch the full message with the username for the frontend
+        const fullMessage = await db.query.messages.findFirst({
+            where: eq(messages.id, updatedMessage.id),
+            with: {
+                owner: { columns:{ username: true } }
+            }
+        })
 
-        res.status(200).json(updatedMessage);
+        const formattedMessage = {
+            id: updatedMessage.id.toString(),
+            username: fullMessage?.owner.username || "Visitor",
+            ownerId: fullMessage?.ownerId.toString(),
+            message: updatedMessage.message,
+            createdAt: updatedMessage.createdAt.toISOString(),
+            likeCount: updatedMessage.likeCount
+        };
+        console.log("Successfully disliked message!");
+
+        res.status(200).json(formattedMessage);
     } catch (error) {
         console.error("Error trying to delete instance in messageLike table: ", error);
         res.status(500).json({ error: "Failed to delete instance in messageLike table" });

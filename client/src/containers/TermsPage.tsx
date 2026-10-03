@@ -22,11 +22,11 @@ export function TermsPage () {
                 </p>
                 
                 <Link 
-                        to={"/"} 
-                        aria-label="Continue to homepage"
+                        to={"/auth/login"} 
+                        aria-label="Continue to registration"
                         className="underline text-blue-600 hover:text-blue-800"
                     >
-                        Redirection to homepage
+                        Going back to registration
                 </Link>
             </div>
         </section>

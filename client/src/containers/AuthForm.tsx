@@ -44,6 +44,7 @@ export default function AuthForm () {
             <div className="w-full h-full rounded-md relative overflow-hidden hidden md:block">
                 <Link
                     to={"/"}
+                    aria-label="Continue to homepage"
                     onClick={cleanFormData}
                     className="absolute top-4 left-4 rounded-full
                         bg-white/50 backdrop-blur-sm px-4 py-1.5 

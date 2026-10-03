@@ -1,2 +1,2 @@
 export const API_URL = import.meta.env?.VITE_API_URL;
-export const E2E_BASE_URL = import.meta.env?.E2E_BASE_URL;
+export const E2E_BASE_URL = import.meta.env?.E2E_BASE_URL || "http://localhost:5173";

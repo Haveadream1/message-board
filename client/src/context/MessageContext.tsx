@@ -7,6 +7,7 @@ import { useAuth } from "./AuthContext";
 interface Message {
     id: string;
     username: string;
+    ownerId: string;
     message: string;
     createdAt: string;
     likeCount: number;
@@ -54,7 +55,11 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
         const fetchInitialMessages = async () => {
             try {
                 const response = await fetch(`${API_URL}/api/messages?page=1&limit=${MESSAGES_LIMIT}`);
-                if (!response.ok) throw new Error("Failed to get messages");
+                if (!response.ok) {
+                    // To display error message matched with the status on backend
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || "Failed to get messages");
+                }
 
                 const data = await response.json();
                 setMessages(data.messages);
@@ -77,7 +82,11 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
                 const response = await fetch(`${API_URL}/api/messages/likes`, {
                     headers: { "Authorization": `Bearer ${token}`}
                 });
-                if (!response.ok) throw new Error("Failed to get liked messages");
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || "Failed to get liked messages");
+                }
 
                 // Set has faster lookups O(1) with .has compared to O(n) with array .includes()
                 const data = await response.json();
@@ -98,13 +107,16 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
 
         const loadMoreOperation = async () => {
             const response = await fetch(`${API_URL}/api/messages?page=${nextPage}&limit=${MESSAGES_LIMIT}`);
-            if (!response.ok) throw new Error("Failed to load more messages");
-
+            
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || "Failed to load more messages");
+            };
             return await response.json();
         }
 
         toast.promise(loadMoreOperation(), {
-            loading: "Loading more messages",
+            loading: "Loading more messages...",
             success: (data) => {
                 setMessages((prev) => [...prev, ...data.messages]);
                 setHasMore(data.hasMore);
@@ -143,7 +155,10 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
                 throw new Error("Session expired, please log in again")
             }
 
-            if (!response.ok) throw new Error("Failed to post message");
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || "Failed to post message");
+            }
             return await response.json();
         }
 
@@ -175,14 +190,15 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
                 throw new Error("Session expired, please log in again");
             }
 
-            if (response.status === 409) throw new Error("You already liked this message");
-
-            if (!response.ok) throw new Error("Failed to update like count");
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || "Failed to like message");
+            }
             return await response.json();
         }
 
         toast.promise(likeOperation(), {
-            loading: "Updating likes...",
+            loading: "Liking message...",
             success: (updatedMessage) => {
                 setMessages((prev) => 
                     prev.map((message) => message.id === id ? updatedMessage : message)
@@ -190,7 +206,7 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
 
                 // Update the state to display after click
                 setLikedMessagesId((prev) => new Set(prev).add(id));
-                return "Successfully updated likes";
+                return "Message liked!";
             },
             error: (err) => err.message
         })
@@ -206,7 +222,11 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
                     "Authorization": `Bearer ${token}`
                 }
             })
-            if (!response.ok) throw new Error("Failed to dislike messsage");
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || "Failed to dislike messsage");
+            }
             return await response.json();
         }
 
@@ -234,7 +254,7 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
         if (!confirmation) return; // Stop execution if user cancel deletion
 
         if (!token) {
-            toast.error("You must be logged in to post");
+            toast.error("You must be logged in to delete");
             return;
         }
 
@@ -252,9 +272,10 @@ export function MessageProvider({ children }: { children: React.ReactNode}) {
                 throw new Error("Session expired, please log in again")
             }
 
-            if (response.status === 403) throw new Error("Forbidden: You can only delete your own messages  ");
-
-            if (!response.ok) throw new Error("Failed to delete message");
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || "Failed to delete message");
+            }
             return await response.json();
         }
 
